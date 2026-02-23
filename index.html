@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" id="html-tag">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bamboo Meme Maker</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Poppins:wght@400;600;700&family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <button id="lang-btn" class="glass-btn">
+        <span class="lang-icon">🌐</span>
+        <span id="lang-text">EN</span>
+    </button>
+
+    <div id="splash-screen" class="screen-layer active">
+        <div class="loader">
+            <div class="bamboo-stick"></div>
+            <div class="bamboo-stick delay-1"></div>
+            <div class="bamboo-stick delay-2"></div>
+        </div>
+        <h2 class="splash-text">Bamboo Factory...</h2>
+    </div>
+
+    <div id="landing-page" class="screen-layer glass-panel" style="display: none;">
+        <h1 id="landing-title">بامبو میم 🎋</h1>
+        <p id="landing-desc" class="subtitle">خلاقیتت رو رها کن!</p>
+        
+        <div class="menu-buttons">
+            <button id="start-app-btn" class="main-btn glass-btn-primary">🎨 ورود به میم‌ساز</button>
+            <button id="support-btn" class="secondary-btn glass-btn-sec">💬 همکاری و پشتیبانی</button>
+            <button id="channel-btn" class="secondary-btn glass-btn-sec">📢 کانال ما</button>
+        </div>
+    </div>
+
+    <div id="app-container" class="screen-layer glass-panel" style="display: none;">
+        <h1 id="title-text">میم‌ساز حرفه‌ای 🎨</h1>
+        
+        <div id="step-1">
+            <input type="file" id="image-upload" accept="image/*" style="display: none;">
+            
+            <button id="upload-btn" class="main-btn glass-btn-green" style="margin-bottom: 15px;">
+                📸 آپلود از گالری گوشی
+            </button>
+
+            <input type="text" id="search-input" placeholder="🔍 جستجوی میم‌های ترند..." class="search-box glass-input">
+
+            <div class="gallery glass-gallery" id="template-gallery">
+                <p id="loading-text" style="color: #555; font-weight: bold; width: 100%;">⏳ در حال دریافت تصاویر...</p>
+            </div>
+            
+            <button id="load-more-btn" class="secondary-btn glass-btn-sec hidden" style="width: 100%; margin-top: 10px;">⬇️ نمایش بیشتر</button>
+            <button id="next-btn" class="main-btn glass-btn-primary" disabled style="margin-top: 15px;">مرحله بعد ➡️</button>
+        </div>
+
+        <div id="step-2" style="display: none;">
+            <div class="canvas-wrapper">
+                <canvas id="meme-canvas"></canvas>
+            </div>
+            
+            <div class="floating-toolbar glass-toolbar">
+                <button id="add-text-btn" class="tool-btn add">
+                    <span class="btn-icon">T+</span>
+                    <span class="btn-label" id="add-text-label">افزودن متن</span>
+                </button>
+                
+                <div id="edit-tools" style="display: none; width: 100%; gap: 10px; justify-content: space-between;">
+                    <button id="edit-text-btn" class="tool-btn" style="background: #3b82f6; width: 50%; justify-content: center;">
+                        <span class="btn-icon">✏️ ویرایش</span>
+                    </button>
+                    <button id="delete-text-btn" class="tool-btn delete" style="width: 50%; margin: 0; border-radius: 15px;">
+                        <span class="btn-icon">🗑️ حذف</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="action-buttons"><button id="back-btn" class="secondary-btn glass-btn-sec">⬅️ بازگشت</button>
+                <button id="download-btn" class="main-btn glass-btn-primary telegram-btn">⬇️ ارسال به بات</button>
+            </div>
+            <button id="share-btn" class="share-btn-full glass-btn-outline">🚀 اشتراک‌گذاری</button>
+        </div>
+    </div>
+
+    <div id="text-edit-panel" class="bottom-sheet glass-panel" style="transform: translateY(120%);">
+        <div class="sheet-handle"></div>
+        <h3 id="panel-title">ویرایش متن ✍️</h3>
+        
+        <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+            <textarea id="text-input-field" class="glass-input text-area-main" rows="2" placeholder="متن خود را اینجا بنویسید..." style="margin-bottom: 0; width: 80%;"></textarea>
+            <button id="inline-close-btn" class="main-btn glass-btn-primary" style="width: 20%; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 24px;">✔️</button>
+        </div>
+        
+        <div class="control-group">
+            <label id="font-label">فونت:</label>
+            <select id="font-family" class="glass-input">
+                <option value="Lalezar">لاله‌زار (ضخیم فارسی)</option>
+                <option value="Vazirmatn">وزیرمتن (خوانا)</option>
+                <option value="Impact">Impact (میم انگلیسی)</option>
+                <option value="Poppins">Poppins (مدرن)</option>
+            </select>
+        </div>
+        
+        <div class="control-group">
+            <label id="size-label">اندازه:</label>
+            <input type="range" id="font-size" min="15" max="150" value="40" class="glass-slider">
+        </div>
+
+        <div class="color-controls">
+            <div class="color-picker-wrapper" title="رنگ متن">
+                <input type="color" id="text-color" value="#ffffff">
+                <div class="color-icon" id="color-indicator" style="background-color: #ffffff;"></div>
+            </div>
+            <span style="font-weight: bold; color: var(--bamboo-dark);" id="color-lbl">رنگ متن</span>
+            
+            <div class="color-picker-wrapper" title="رنگ حاشیه">
+                <input type="color" id="stroke-color" value="#000000">
+                <div class="color-icon" id="stroke-indicator" style="background-color: #000000;"></div>
+            </div>
+            <span style="font-weight: bold; color: var(--bamboo-dark);" id="stroke-lbl">حاشیه</span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
