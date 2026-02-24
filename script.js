@@ -8,7 +8,7 @@ try {
         tg.expand();
     }
 } catch (e) {
-    console.log("Telegram WebApp Error:", e);
+    console.log("Telegram WebApp Error");
 }
 
 const translations = {
@@ -28,9 +28,10 @@ const translations = {
         supportSend: "Send 🚀", supportClose: "Close ❌",
         
         alertEmpty: "Please fill the required fields! 😅", 
-        alertSuccessCollab: "Your request has been received. Our team will contact you if needed! ✅",
-        alertSuccessSupport: "Your message has been sent to the support team! ✅",
-        alertError: "Oops! Something went wrong."
+        alertSuccessCollab: "Your request has been received! ✅",
+        alertSuccessSupport: "Your message has been sent! ✅",
+        alertError: "Oops! Something went wrong.",
+        newTextDef: "New Text"
     },
     fa: {
         langTxt: "EN", landingTitle: "بامبو میم 🎋", landingDesc: "خلاقیتت رو رها کن!",
@@ -48,9 +49,10 @@ const translations = {
         supportSend: "ارسال 🚀", supportClose: "بستن ❌",
         
         alertEmpty: "رئیس، لطفا فیلدهای لازم رو پر کن! 😅", 
-        alertSuccessCollab: "درخواست شما ثبت شد. تیم ما بررسی می‌کنه و در صورت نیاز ارتباط می‌گیره باهاتون! ✅",
-        alertSuccessSupport: "پیام شما برای تیم پشتیبانی ارسال شد! ✅",
-        alertError: "اوه! مشکلی پیش آمد."
+        alertSuccessCollab: "درخواست شما ثبت شد! ✅",
+        alertSuccessSupport: "پیام شما ارسال شد! ✅",
+        alertError: "اوه! مشکلی پیش آمد.",
+        newTextDef: "متن جدید"
     }
 };
 
@@ -61,10 +63,9 @@ let allMemes = [];
 let filteredMemes = [];
 let currentPage = 1;
 const memesPerPage = 20;
-
 let activeTab = 'support';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     const splashScreen = document.getElementById('splash-screen');
     const landingPage = document.getElementById('landing-page');
     const appContainer = document.getElementById('app-container');
@@ -89,12 +90,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchTrendingMemes();
 
-    setTimeout(() => {
+    // عبور کاملا ایمن از لودینگ
+    setTimeout(function() {
         try {
             if (splashScreen) splashScreen.style.display = 'none';
             if (landingPage) landingPage.style.display = 'block';
             updateLanguage(currentLang);
-        } catch (error) {
+        } catch (e) {
             if (splashScreen) splashScreen.style.display = 'none';
             if (landingPage) landingPage.style.display = 'block';
         }
@@ -102,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const startAppBtn = document.getElementById('start-app-btn');
     if (startAppBtn) {
-        startAppBtn.addEventListener('click', () => {
+        startAppBtn.addEventListener('click', function() {
             if (landingPage) landingPage.style.display = 'none';
             if (appContainer) appContainer.style.display = 'block';
         });
@@ -110,18 +112,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const backToMenuBtn = document.getElementById('back-to-menu-btn');
     if (backToMenuBtn) {
-        backToMenuBtn.addEventListener('click', () => {
+        backToMenuBtn.addEventListener('click', function() {
             if (appContainer) appContainer.style.display = 'none';
             if (landingPage) landingPage.style.display = 'block';
         });
     }
 
     const channelBtn = document.getElementById('channel-btn');
-    if (channelBtn) channelBtn.addEventListener('click', () => window.open('https://t.me/bamboo_network', '_blank'));
+    if (channelBtn) channelBtn.addEventListener('click', function() { window.open('https://t.me/bamboo_network', '_blank'); });
 
     const langBtn = document.getElementById('lang-btn');
     if (langBtn) {
-        langBtn.addEventListener('click', () => {
+        langBtn.addEventListener('click', function() {
             currentLang = currentLang === 'fa' ? 'en' : 'fa';
             updateLanguage(currentLang);
         });
@@ -171,12 +173,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const supportBtnMenu = document.getElementById('support-btn');
     if (supportBtnMenu) {
-        supportBtnMenu.onclick = () => { if(supportModal) supportModal.style.display = 'block'; };
+        supportBtnMenu.onclick = function() { if(supportModal) supportModal.style.display = 'block'; };
     }
 
     const closeSupportBtn = document.getElementById('close-support-btn');
     if (closeSupportBtn) {
-        closeSupportBtn.onclick = () => { 
+        closeSupportBtn.onclick = function() { 
             if(supportModal) supportModal.style.display = 'none'; 
             if(supportText) supportText.value = ''; 
             if(collabChannel) collabChannel.value = '';
@@ -188,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (tabSupportBtn && tabCollabBtn) {
-        tabSupportBtn.onclick = () => {
+        tabSupportBtn.onclick = function() {
             activeTab = 'support';
             tabSupportBtn.className = 'main-btn glass-btn-primary';
             tabCollabBtn.className = 'secondary-btn glass-btn-sec';
@@ -196,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if(formCollabView) formCollabView.style.display = 'none';
         };
 
-        tabCollabBtn.onclick = () => {
+        tabCollabBtn.onclick = function() {
             activeTab = 'collab';
             tabCollabBtn.className = 'main-btn glass-btn-primary';
             tabSupportBtn.className = 'secondary-btn glass-btn-sec';
@@ -206,8 +208,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (supportImgBtn && supportFileUpload) {
-        supportImgBtn.onclick = () => supportFileUpload.click();
-        supportFileUpload.onchange = (e) => {
+        supportImgBtn.onclick = function() { supportFileUpload.click(); };
+        supportFileUpload.onchange = function(e) {
             if (e.target.files.length > 0 && supportFileName) {
                 supportFileName.style.display = 'block';
             }
@@ -216,17 +218,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const sendSupportBtn = document.getElementById('send-support-btn');
     if (sendSupportBtn) {
-        sendSupportBtn.onclick = () => {
+        sendSupportBtn.onclick = function() {
             const t = translations[currentLang];
             const originalText = sendSupportBtn.innerText;
 
-            let senderInfo = "خارج از تلگرام (مروگر وب)";
+            let senderInfo = "Web Browser";
             try {
                 if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
                     const u = tg.initDataUnsafe.user;
-                    senderInfo = آیدی عددی: <code>${u.id}</code>\nنام: ${u.first_name || ''} ${u.last_name || ''}\nیوزرنیم: @${u.username || 'ندارد'};
+                    senderInfo = "ID: " + u.id + "\nName: " + (u.first_name || '') + " " + (u.last_name || '') + "\nUser: @" + (u.username || '');
                 }
-            } catch(err) { console.log(err); }
+            } catch(err) {}
 
             if (activeTab === 'support') {
                 const message = supportText ? supportText.value.trim() : "";
@@ -241,24 +243,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     const fd = new FormData();
                     fd.append('chat_id', ADMIN_CHAT_ID);
                     fd.append('photo', file);
-                    fd.append('caption', `🛠️ <b>پشتیبانی بامبو میم</b>\n\n👤 <b>فرستنده:</b>\n${senderInfo}\n\n📝 <b>متن پیام:</b>\n${message}`);
-                    fd.append('parse_mode', 'HTML');
+                    fd.append('caption', "🛠 Support Ticket\n\n👤 Sender:\n" + senderInfo + "\n\n📝 Message:\n" + message);
 
                     fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendPhoto", { method: 'POST', body: fd })
-                    .then(res => res.json()).then(data => {
+                    .then(function(res) { return res.json(); }).then(function(data) {
                         if (data.ok) { alert(t.alertSuccessSupport); if(closeSupportBtn) closeSupportBtn.click(); } 
                         else { alert(t.alertError); }
-                    }).catch(() => alert(t.alertError)).finally(() => { sendSupportBtn.innerText = originalText; sendSupportBtn.disabled = false; });
+                    }).catch(function() { alert(t.alertError); }).finally(function() { sendSupportBtn.innerText = originalText; sendSupportBtn.disabled = false; });
                 } else {
-                    const finalMsg = 🛠️ <b>پشتیبانی بامبو میم</b>\n\n👤 <b>فرستنده:</b>\n${senderInfo}\n\n📝 <b>متن پیام:</b>\n${message};
+                    const finalMsg = "🛠 Support Ticket\n\n👤 Sender:\n" + senderInfo + "\n\n📝 Message:\n" + message;
                     fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {
                         method: 'POST', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: finalMsg, parse_mode: "HTML" })
+                        body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: finalMsg })
                     })
-                    .then(res => res.json()).then(data => {
+                    .then(function(res) { return res.json(); }).then(function(data) {
                         if (data.ok) { alert(t.alertSuccessSupport); if(closeSupportBtn) closeSupportBtn.click(); } 
                         else { alert(t.alertError); }
-                    }).catch(() => alert(t.alertError)).finally(() => { sendSupportBtn.innerText = originalText; sendSupportBtn.disabled = false; });
+                    }).catch(function() { alert(t.alertError); }).finally(function() { sendSupportBtn.innerText = originalText; sendSupportBtn.disabled = false; });
                 }
 
             } else if (activeTab === 'collab') {
@@ -271,25 +272,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 sendSupportBtn.innerText = "⏳...";
                 sendSupportBtn.disabled = true;
 
-                const finalMsg = 🤝 <b>درخواست همکاری جدید</b>\n\n👤 <b>فرستنده (سیستم):</b>\n${senderInfo}\n\n📢 فرم کانال: ${ch}\n👤 فرم آیدی: ${tgId}\n📝 توضیحات اضافه:\n${ex};
+                const finalMsg = "🤝 Collab Request\n\n👤 Sender:\n" + senderInfo + "\n\n📢 Channel: " + ch + "\n👤 Admin ID: " + tgId + "\n📝 Extra:\n" + ex;
 
                 fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: finalMsg, parse_mode: "HTML" })
+                    body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: finalMsg })
                 })
-                .then(res => res.json()).then(data => {
+                .then(function(res) { return res.json(); }).then(function(data) {
                     if (data.ok) { alert(t.alertSuccessCollab); if(closeSupportBtn) closeSupportBtn.click(); } 
                     else { alert(t.alertError); }
-                }).catch(() => alert(t.alertError)).finally(() => { sendSupportBtn.innerText = originalText; sendSupportBtn.disabled = false; });
+                }).catch(function() { alert(t.alertError); }).finally(function() { sendSupportBtn.innerText = originalText; sendSupportBtn.disabled = false; });
             }
         };
     }
 
     function fetchTrendingMemes() {
         try {
-            fetch('https://api.imgflip.com/get_memes').then(res => res.json()).then(data => {
-                if (data.success) { allMemes = data.data.memes; filteredMemes = [...allMemes]; renderGallery(); }
-            }).catch(e => console.log(e));
+            fetch('https://api.imgflip.com/get_memes').then(function(res) { return res.json(); }).then(function(data) {
+                if (data.success) { allMemes = data.data.memes; filteredMemes = [].concat(allMemes); renderGallery(); }
+            }).catch(function(e) {});
         } catch(e) {}
     }
 
@@ -297,11 +298,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!templateGallery) return;
         if (currentPage === 1) templateGallery.innerHTML = '';
         const memesToShow = filteredMemes.slice((currentPage - 1) * memesPerPage, currentPage * memesPerPage);
-        memesToShow.forEach(meme => {
+        memesToShow.forEach(function(meme) {
             const img = document.createElement('img');
             img.src = meme.url; img.className = 'template-img'; img.crossOrigin = "anonymous";
-            img.onclick = () => {
-                document.querySelectorAll('.template-img').forEach(i => i.classList.remove('selected'));
+            img.onclick = function() {
+                document.querySelectorAll('.template-img').forEach(function(i) { i.classList.remove('selected'); });
                 img.classList.add('selected'); selectedImageSrc = img.src;
                 const nextBtn = document.getElementById('next-btn');
                 if (nextBtn) nextBtn.disabled = false;
@@ -313,30 +314,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const searchInput = document.getElementById('search-input');
-    if (searchInput) searchInput.oninput = (e) => { filteredMemes = allMemes.filter(m => m.name.toLowerCase().includes(e.target.value.toLowerCase())); currentPage = 1; renderGallery(); };
+    if (searchInput) searchInput.oninput = function(e) { filteredMemes = allMemes.filter(function(m) { return m.name.toLowerCase().includes(e.target.value.toLowerCase()); }); currentPage = 1; renderGallery(); };
     
     const loadMoreBtn = document.getElementById('load-more-btn');
-    if (loadMoreBtn) loadMoreBtn.onclick = () => { currentPage++; renderGallery(); };
+    if (loadMoreBtn) loadMoreBtn.onclick = function() { currentPage++; renderGallery(); };
 
     const uploadBtn = document.getElementById('upload-btn');
     const imageUpload = document.getElementById('image-upload');
     if (uploadBtn && imageUpload) {
-        uploadBtn.onclick = () => imageUpload.click();
-        imageUpload.onchange = (e) => {
+        uploadBtn.onclick = function() { imageUpload.click(); };
+        imageUpload.onchange = function(e) {
             const file = e.target.files[0]; if (!file) return;
             const reader = new FileReader();
-            reader.onload = (ev) => { selectedImageSrc = ev.target.result; goToStep2(); };
-            reader.readAsDataURL(file);};
+            reader.onload = function(ev) { selectedImageSrc = ev.target.result; goToStep2(); };
+            reader.readAsDataURL(file);
+        };
     }
 
     const nextBtn = document.getElementById('next-btn');
     if (nextBtn) nextBtn.onclick = goToStep2;
 
     const backBtn = document.getElementById('back-btn');
-    if (backBtn) backBtn.onclick = () => { if(step2) step2.style.display = 'none'; if(step1) step1.style.display = 'block'; };
+    if (backBtn) backBtn.onclick = function() { if(step2) step2.style.display = 'none'; if(step1) step1.style.display = 'block'; };
 
     // =====================================
-    // منطق راه‌اندازی بوم و اضافه کردن واترمارک
+    // منطق بوم و واترمارک @creat_meme_bot
     // =====================================
     function goToStep2() {
         if(step1) step1.style.display = 'none'; 
@@ -350,27 +352,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const canvasWrapper = document.querySelector('.canvas-wrapper');
         const containerWidth = canvasWrapper ? canvasWrapper.clientWidth : 300;
         
-        fabric.Image.fromURL(imgSrc, (img) => {
+        fabric.Image.fromURL(imgSrc, function(img) {
             const scale = containerWidth / img.width;
             fCanvas.setWidth(containerWidth); fCanvas.setHeight(img.height * scale);
             fCanvas.setBackgroundImage(img, fCanvas.renderAll.bind(fCanvas), { scaleX: scale, scaleY: scale, originX: 'left', originY: 'top', crossOrigin: 'anonymous' });
 
-            // ساخت و اضافه کردن واترمارک به عنوان امضای پروژه
+            // اضافه کردن واترمارک
             const watermark = new fabric.Text('@creat_meme_bot', {
                 left: containerWidth - 10,
                 top: (img.height * scale) - 10,
                 fontFamily: 'Poppins',
-                fontSize: 14,
-                fill: 'rgba(255, 255, 255, 0.65)',
-                stroke: 'rgba(0, 0, 0, 0.8)',
+                fontSize: 16,
+                fill: 'rgba(255, 255, 255, 0.7)',
+                stroke: 'rgba(0, 0, 0, 0.9)',
                 strokeWidth: 3,
                 paintFirst: 'stroke',
                 originX: 'right',
                 originY: 'bottom',
-                selectable: false, // غیرقابل تغییر
-                evented: false, // غیرقابل کلیک
+                selectable: false,
+                evented: false,
                 fontWeight: 'bold',
-                name: 'watermark' // برای پیدا کردنش تو کد
+                name: 'watermark'
             });
             fCanvas.add(watermark);
 
@@ -380,11 +382,13 @@ document.addEventListener('DOMContentLoaded', () => {
         fCanvas.on('selection:updated', onTextSelected);
         fCanvas.on('selection:cleared', onSelectionCleared);
 
-        // این بخش تضمین می‌کنه واترمارک همیشه بالاترین لایه بمونه
-        fCanvas.on('object:added', (e) => {
+        // واترمارک رو همیشه بالا نگه دار
+        fCanvas.on('object:added', function(e) {
             if (e.target && e.target.name !== 'watermark') {
-                const wm = fCanvas.getObjects().find(o => o.name === 'watermark');
-                if (wm) wm.bringToFront();
+                const objs = fCanvas.getObjects();
+                for(let i=0; i<objs.length; i++){
+                    if(objs[i].name === 'watermark') { objs[i].bringToFront(); break; }
+                }
             }
         });
     }
@@ -420,7 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (document.getElementById('color-indicator')) document.getElementById('color-indicator').style.backgroundColor = activeObj.fill || '#ffffff';
             if (document.getElementById('stroke-color')) document.getElementById('stroke-color').value = activeObj.stroke || '#000000';
             if (document.getElementById('stroke-indicator')) document.getElementById('stroke-indicator').style.backgroundColor = activeObj.stroke || '#000000';
-            setTimeout(() => { if(textInputField) textInputField.focus(); }, 300);
+            setTimeout(function() { if(textInputField) textInputField.focus(); }, 300);
         }
     }
 
@@ -429,9 +433,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const addTextBtn = document.getElementById('add-text-btn');
     if(addTextBtn) {
-        addTextBtn.onclick = () => {
+        addTextBtn.onclick = function() {
             if (!fCanvas) return;
-            const text = new fabric.Text(currentLang === 'fa' ? 'متن جدید' : 'New Text', {
+            const t = translations[currentLang];
+            const text = new fabric.Text(t.newTextDef, {
                 left: fCanvas.width / 2, top: fCanvas.height / 2, fontFamily: 'Lalezar', fill: '#ffffff',
                 fontSize: 40, fontWeight: 'bold', stroke: '#000000', strokeWidth: 2, originX: 'center', originY: 'center', paintFirst: 'stroke'
             });
@@ -445,13 +450,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const textInputField = document.getElementById('text-input-field');
     if(textInputField) {
-        textInputField.oninput = (e) => { const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('text', e.target.value); fCanvas.renderAll(); } };
+        textInputField.oninput = function(e) { const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('text', e.target.value); fCanvas.renderAll(); } };
     }
 
-    if(document.getElementById('font-family')) document.getElementById('font-family').onchange = (e) => { const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('fontFamily', e.target.value); fCanvas.renderAll(); } };
-    if(document.getElementById('font-size')) document.getElementById('font-size').oninput = (e) => { const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('fontSize', parseInt(e.target.value)); fCanvas.renderAll(); } };
-    if(document.getElementById('text-color')) document.getElementById('text-color').oninput = (e) => { if(document.getElementById('color-indicator')) document.getElementById('color-indicator').style.backgroundColor = e.target.value; const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('fill', e.target.value); fCanvas.renderAll(); } };
-    if(document.getElementById('stroke-color')) document.getElementById('stroke-color').oninput = (e) => { if(document.getElementById('stroke-indicator')) document.getElementById('stroke-indicator').style.backgroundColor = e.target.value; const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('stroke', e.target.value); fCanvas.renderAll(); } };
+    if(document.getElementById('font-family')) document.getElementById('font-family').onchange = function(e) { const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('fontFamily', e.target.value); fCanvas.renderAll(); } };
+    if(document.getElementById('font-size')) document.getElementById('font-size').oninput = function(e) { const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('fontSize', parseInt(e.target.value)); fCanvas.renderAll(); } };
+    if(document.getElementById('text-color')) document.getElementById('text-color').oninput = function(e) { if(document.getElementById('color-indicator')) document.getElementById('color-indicator').style.backgroundColor = e.target.value; const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('fill', e.target.value); fCanvas.renderAll(); } };
+    if(document.getElementById('stroke-color')) document.getElementById('stroke-color').oninput = function(e) { if(document.getElementById('stroke-indicator')) document.getElementById('stroke-indicator').style.backgroundColor = e.target.value; const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('stroke', e.target.value); fCanvas.renderAll(); } };
 
     function closeEditPanel() {
         const textEditPanel = document.getElementById('text-edit-panel');
@@ -464,20 +469,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const deleteTextBtn = document.getElementById('delete-text-btn');
     if(deleteTextBtn) {
-        deleteTextBtn.onclick = () => { const active = fCanvas.getActiveObject(); if (active && active.name !== 'watermark') { fCanvas.remove(active); closeEditPanel(); fCanvas.discardActiveObject().renderAll(); } };
+        deleteTextBtn.onclick = function() { const active = fCanvas.getActiveObject(); if (active && active.name !== 'watermark') { fCanvas.remove(active); closeEditPanel(); fCanvas.discardActiveObject().renderAll(); } };
     }
 
     const downloadBtn = document.getElementById('download-btn');
     if(downloadBtn) {
-        downloadBtn.addEventListener('click', () => {
-            const chatId = tg?.initDataUnsafe?.user?.id;if (!chatId) return alert(currentLang === 'fa' ? "از داخل ربات تلگرام باز کنید" : "Open in bot");
+        downloadBtn.addEventListener('click', function() {
+            let chatId = null;
+            if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                chatId = tg.initDataUnsafe.user.id;
+            }
+            if (!chatId) return alert(currentLang === 'fa' ? "از داخل ربات تلگرام باز کنید" : "Open in bot");
+            
             if (fCanvas) {
                 fCanvas.discardActiveObject().renderAll();
                 const dataURL = fCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 3 });
-                fetch(dataURL).then(res => res.blob()).then(blob => {
+                fetch(dataURL).then(function(res) { return res.blob(); }).then(function(blob) {
                     const fd = new FormData(); fd.append('chat_id', chatId); fd.append('photo', blob, 'meme.png');
                     fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendPhoto", { method: 'POST', body: fd })
-                    .then(() => { if (tg) tg.close(); });
+                    .then(function() { if (tg) tg.close(); });
                 });
             }
         });
@@ -485,11 +495,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const shareBtn = document.getElementById('share-btn');
     if(shareBtn) {
-        shareBtn.addEventListener('click', () => {
+        shareBtn.addEventListener('click', function() {
             if (fCanvas) {
                 fCanvas.discardActiveObject().renderAll();
                 const dataURL = fCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 3 });
-                fetch(dataURL).then(res => res.blob()).then(async blob => {
+                fetch(dataURL).then(function(res) { return res.blob(); }).then(async function(blob) {
                     const file = new File([blob], "meme.png", { type: "image/png" });
                     if (navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file] }); }
                 });
