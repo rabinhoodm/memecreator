@@ -7,7 +7,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Poppins:wght@400;600;700&family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Poppins:wght@400;600;700;900&family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
@@ -16,9 +16,12 @@
 <body>
 
     <div class="bg-3d-container">
-        <div class="shape-glass sphere-glass"></div>
-        <div class="shape-glass cube-glass"></div>
-        <div class="shape-glass star-glass"></div>
+        <div class="bamboo-bg-text">BAMBOO</div>
+        <div class="shape-glass blob-3d-1"></div>
+        <div class="shape-glass blob-3d-2"></div>
+        <div class="shape-glass blob-3d-3"></div>
+        <div class="shape-glass blob-3d-4"></div>
+        <div class="shape-glass blob-3d-5"></div>
     </div>
 
     <button id="lang-btn" class="glass-btn">
@@ -79,8 +82,8 @@
                     <span class="btn-label" id="add-text-label">افزودن متن</span>
                 </button>
                 
-                <div id="edit-tools" style="display: none; width: 100%; gap: 10px; justify-content: space-between;">
-                    <button id="edit-text-btn" class="tool-btn" style="background: #3b82f6; width: 50%; justify-content: center;"><span class="btn-icon">✏️ ویرایش</span>
+                <div id="edit-tools" style="display: none; width: 100%; gap: 10px; justify-content: space-between;"><button id="edit-text-btn" class="tool-btn" style="background: #3b82f6; width: 50%; justify-content: center;">
+                        <span class="btn-icon">✏️ ویرایش</span>
                     </button>
                     <button id="delete-text-btn" class="tool-btn delete" style="width: 50%; margin: 0; border-radius: 15px;">
                         <span class="btn-icon">🗑️ حذف</span>
@@ -96,10 +99,27 @@
         </div>
     </div>
 
-    <div id="support-modal" class="glass-panel" style="display: none; position: fixed; z-index: 9999; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 400px;">
-        <h3 id="support-title" style="color: #d97706; margin-top: 0; margin-bottom: 10px;">ارتباط با مدیریت 💎</h3>
-        <p id="support-desc" style="font-size: 0.85rem; color: #555; margin-bottom: 15px;">درخواست همکاری، اسپانسری یا مشکل خود را بنویسید.</p>
-        <textarea id="support-text" class="glass-input text-area-main" rows="4" placeholder="پیام شما..." style="resize: none;"></textarea>
+    <div id="support-modal" class="glass-panel" style="display: none; position: fixed; z-index: 9999; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 400px; padding: 20px;">
+        
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button id="tab-support-btn" class="main-btn glass-btn-primary" style="flex: 1; padding: 10px;">🛠️ پشتیبانی</button>
+            <button id="tab-collab-btn" class="secondary-btn glass-btn-sec" style="flex: 1; padding: 10px;">🤝 همکاری</button>
+        </div>
+
+        <div id="form-support-view">
+            <textarea id="support-text" class="glass-input text-area-main" rows="3" placeholder="مشکل یا سوالتون رو کامل بنویسید..." style="resize: none;"></textarea>
+            
+            <input type="file" id="support-file-upload" accept="image/*" style="display: none;">
+            <button id="support-img-btn" class="secondary-btn glass-btn-sec" style="margin-bottom: 15px; font-size: 0.9rem; border-style: dashed;">📎 ضمیمه کردن عکس (اختیاری)</button>
+            <p id="support-file-name" style="color: var(--bamboo-green); font-size: 0.8rem; margin-top: -10px; margin-bottom: 15px; display: none;">عکسی انتخاب شد ✅</p>
+        </div>
+
+        <div id="form-collab-view" style="display: none;">
+            <input type="text" id="collab-channel" class="glass-input" placeholder="آیدی کانال شما (مثال: channel@)">
+            <input type="text" id="collab-telegram" class="glass-input" placeholder="آیدی تلگرام شما جهت ارتباط">
+            <textarea id="collab-extra" class="glass-input text-area-main" rows="2" placeholder="توضیحات اضافه در صورت نیاز..." style="resize: none; margin-bottom: 15px;"></textarea>
+        </div>
+
         <div style="display: flex; gap: 10px;">
             <button id="send-support-btn" class="main-btn glass-btn-primary" style="flex: 1; background: linear-gradient(135deg, #facc15, #eab308); border: none; color: #fff;">ارسال 🚀</button>
             <button id="close-support-btn" class="secondary-btn glass-btn-sec" style="flex: 1; border-color: #ef4444; color: #ef4444;">بستن ❌</button>
@@ -120,8 +140,7 @@
             <select id="font-family" class="glass-input">
                 <option value="Lalezar">لاله‌زار (ضخیم فارسی)</option>
                 <option value="Vazirmatn">وزیرمتن (خوانا)</option>
-                <option value="Impact">Impact (میم انگلیسی)</option>
-                <option value="Poppins">Poppins (مدرن)</option>
+                <option value="Impact">Impact (میم انگلیسی)</option><option value="Poppins">Poppins (مدرن)</option>
             </select>
         </div>
         
