@@ -9,7 +9,8 @@
 body { font-family: var(--font-en); background: linear-gradient(135deg, #e0f2e9 0%, #ffffff 50%, #d5f5e3 100%); background-attachment: fixed; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; overflow-x: hidden; }
 html[dir="rtl"] body { font-family: var(--font-fa); }
 
-.screen-layer { width: 92%; max-width: 420px; position: absolute; transition: opacity 0.5s ease, transform 0.5s ease; }
+/* لایه‌های اصلی رو آوردیم روی حباب‌ها */
+.screen-layer { width: 92%; max-width: 420px; position: absolute; transition: opacity 0.5s ease, transform 0.5s ease; z-index: 10; }
 .glass-panel { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); padding: 30px 25px; text-align: center; box-sizing: border-box; }
 
 h1 { color: var(--bamboo-dark); margin-bottom: 10px; font-weight: 700; }
@@ -68,3 +69,16 @@ html[dir="ltr"] .control-group { text-align: left; }
 .color-picker-wrapper { position: relative; width: 35px; height: 35px; border-radius: 50%; overflow: hidden; cursor: pointer; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 .color-picker-wrapper input[type="color"] { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
 .color-icon { width: 100%; height: 100%; border-radius: 50%; }
+
+/* === پس‌زمینه اجسام سه‌بعدی متحرک === */
+.bg-3d-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; overflow: hidden; pointer-events: none; }
+.shape-glass { position: absolute; background: rgba(74, 222, 128, 0.08); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05), inset 0 0 20px rgba(74, 222, 128, 0.1); animation: morphFloat 20s infinite alternate ease-in-out; }
+.blob-1 { width: 350px; height: 350px; top: -10%; left: -10%; animation-duration: 25s; }
+.blob-2 { width: 450px; height: 450px; bottom: -20%; right: -15%; background: rgba(45, 212, 191, 0.1); animation-duration: 30s; animation-direction: reverse; }
+.blob-3 { width: 250px; height: 250px; top: 40%; left: 60%; background: rgba(250, 204, 21, 0.1); animation-duration: 22s; }
+
+@keyframes morphFloat {
+    0% { transform: translateY(0) rotate(0deg) scale(1); border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+    50% { transform: translateY(-40px) rotate(180deg) scale(1.1); border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+    100% { transform: translateY(20px) rotate(360deg) scale(0.9); border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+}

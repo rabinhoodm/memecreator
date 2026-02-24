@@ -1,4 +1,5 @@
 const BOT_TOKEN = "8680179449:AAHb26-jsgM-Q92zEAeBxzM0ycHbpoJkAvk"; 
+const ADMIN_CHAT_ID = "6156596236"; // آیدی تو اضافه شد
 
 let tg = null;
 if (window.Telegram && window.Telegram.WebApp) {
@@ -14,7 +15,11 @@ const translations = {
         searchPlc: "🔍 Search memes...", loadMoreBtn: "⬇️ Load More", nextBtn: "Next Step ➡️",
         backBtn: "⬅️ Back", downloadBtn: "⬇️ Send to Bot", shareBtn: "🚀 Share",
         addTextLbl: "Add Text", dir: "ltr", panelTitle: "Edit Text ✍️", fontLbl: "Font:", sizeLbl: "Size:",
-        colorLbl: "Text Color", strokeLbl: "Stroke", placeholder: "Type your text here..."
+        colorLbl: "Text Color", strokeLbl: "Stroke", placeholder: "Type your text here...",
+        // ترجمه‌های جدید برای بخش اسپانسر:
+        sponsorBtnTxt: "Sponsorship", sponsorTitle: "Sponsorship Request 💎", sponsorDesc: "Write your details to send directly to the admin.",
+        sponsorPlc: "Hi, I would like to request...", sponsorSend: "🚀 Send", sponsorClose: "❌ Close",
+        alertEmpty: "Please write a message first! 😅", alertSuccess: "Message sent successfully! ✅", alertError: "Oops! Something went wrong."
     },
     fa: {
         langTxt: "EN", landingTitle: "بامبو میم 🎋", landingDesc: "خلاقیتت رو رها کن!",
@@ -23,7 +28,11 @@ const translations = {
         searchPlc: "🔍 جستجوی میم...", loadMoreBtn: "⬇️ نمایش بیشتر", nextBtn: "مرحله بعد ⬅️",
         backBtn: "➡️ بازگشت", downloadBtn: "⬇️ ارسال به بات", shareBtn: "🚀 اشتراک‌گذاری",
         addTextLbl: "افزودن متن", dir: "rtl", panelTitle: "ویرایش متن ✍️", fontLbl: "فونت:", sizeLbl: "اندازه:",
-        colorLbl: "رنگ متن", strokeLbl: "حاشیه", placeholder: "متن خود را اینجا بنویسید..."
+        colorLbl: "رنگ متن", strokeLbl: "حاشیه", placeholder: "متن خود را اینجا بنویسید...",
+        // ترجمه‌های جدید برای بخش اسپانسر:
+        sponsorBtnTxt: "درخواست اسپانسری", sponsorTitle: "درخواست اسپانسری 💎", sponsorDesc: "مشخصات و درخواست خود را بنویسید تا به مدیریت ارسال شود.",
+        sponsorPlc: "سلام، من مدیر کانال...", sponsorSend: "🚀 ارسال پیام", sponsorClose: "❌ بستن",
+        alertEmpty: "رئیس، لطفا اول پیامت رو بنویس! 😅", alertSuccess: "پیام شما با موفقیت ارسال شد! ✅", alertError: "اوه! مشکلی پیش آمد."
     }
 };
 
@@ -51,6 +60,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const textInputField = document.getElementById('text-input-field');
     const inlineCloseBtn = document.getElementById('inline-close-btn');
 
+    // === المان‌های مربوط به اسپانسر ===
+    const sponsorModal = document.getElementById('sponsor-modal');
+    const sponsorText = document.getElementById('sponsor-text');
+
     fetchTrendingMemes();
 
     setTimeout(() => {
@@ -61,8 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 2500);
 
-    document.getElementById('start-app-btn')?.addEventListener('click', () => {
-        landingPage.style.display = 'none';
+    document.getElementById('start-app-btn')?.addEventListener('click', () => {landingPage.style.display = 'none';
         appContainer.style.display = 'block';
     });
 
@@ -82,7 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('landing-desc').innerText = t.landingDesc;
         document.getElementById('start-app-btn').innerText = t.startBtn;
         document.getElementById('support-btn').innerText = t.supportBtn;
-        document.getElementById('channel-btn').innerText = t.channelBtn;document.getElementById('title-text').innerText = t.title;
+        document.getElementById('channel-btn').innerText = t.channelBtn;
+        document.getElementById('title-text').innerText = t.title;
         document.getElementById('upload-btn').innerText = t.uploadBtn;
         document.getElementById('search-input').placeholder = t.searchPlc;
         document.getElementById('load-more-btn').innerText = t.loadMoreBtn;
@@ -97,7 +110,60 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('color-lbl').innerText = t.colorLbl;
         document.getElementById('stroke-lbl').innerText = t.strokeLbl;
         textInputField.placeholder = t.placeholder;
+
+        // ترجمه‌های دکمه اسپانسر
+        if(document.getElementById('sponsor-btn-txt')) document.getElementById('sponsor-btn-txt').innerText = t.sponsorBtnTxt;
+        if(document.getElementById('sponsor-title')) document.getElementById('sponsor-title').innerText = t.sponsorTitle;
+        if(document.getElementById('sponsor-desc')) document.getElementById('sponsor-desc').innerText = t.sponsorDesc;
+        if(document.getElementById('sponsor-text')) document.getElementById('sponsor-text').placeholder = t.sponsorPlc;
+        if(document.getElementById('send-sponsor-btn')) document.getElementById('send-sponsor-btn').innerText = t.sponsorSend;
+        if(document.getElementById('close-sponsor-btn')) document.getElementById('close-sponsor-btn').innerText = t.sponsorClose;
     }
+
+    // === منطق باز و بسته شدن و ارسال اسپانسر ===
+    document.getElementById('sponsor-btn')?.addEventListener('click', () => {
+        sponsorModal.style.display = 'block';
+    });
+
+    document.getElementById('close-sponsor-btn')?.addEventListener('click', () => {
+        sponsorModal.style.display = 'none';
+        sponsorText.value = '';
+    });
+
+    document.getElementById('send-sponsor-btn')?.addEventListener('click', () => {
+        const message = sponsorText.value.trim();
+        const t = translations[currentLang];
+        
+        if (!message) return alert(t.alertEmpty);
+        
+        const btn = document.getElementById('send-sponsor-btn');
+        const originalText = btn.innerText;
+        btn.innerText = "⏳...";
+        btn.disabled = true;
+
+        const finalMessage = 🌟 <b>درخواست اسپانسری (بامبو میم)</b>\n\n💬 پیام:\n${message};
+
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: finalMessage, parse_mode: "HTML" })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.ok) {
+                alert(t.alertSuccess);
+                sponsorModal.style.display = 'none';
+                sponsorText.value = '';
+            } else {
+                alert(t.alertError);
+            }
+        })
+        .catch(() => alert(t.alertError))
+        .finally(() => {
+            btn.innerText = originalText;
+            btn.disabled = false;
+        });
+    });
 
     function fetchTrendingMemes() {
         fetch('https://api.imgflip.com/get_memes').then(res => res.json()).then(data => {
@@ -251,14 +317,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // ==========================================
-    // حل مشکل کیفیت تصویر (افزایش کیفیت خروجی به 3 برابر)
-    // ==========================================
     document.getElementById('download-btn')?.addEventListener('click', () => {
         const chatId = tg?.initDataUnsafe?.user?.id;if (!chatId) return alert(currentLang === 'fa' ? "از داخل ربات تلگرام باز کنید" : "Open in bot");
         fCanvas.discardActiveObject().renderAll();
         
-        // جادوی multiplier اینجاست!
         const dataURL = fCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 3 });
         
         fetch(dataURL).then(res => res.blob()).then(blob => {
@@ -270,7 +332,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('share-btn')?.addEventListener('click', () => {
         fCanvas.discardActiveObject().renderAll();
         
-        // جادوی multiplier برای دکمه اشتراک‌گذاری
         const dataURL = fCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 3 });
         
         fetch(dataURL).then(res => res.blob()).then(async blob => {
