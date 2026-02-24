@@ -89,7 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchTrendingMemes();
 
-    // عبور ایمن از لودینگ
     setTimeout(() => {
         try {
             if (splashScreen) splashScreen.style.display = 'none';
@@ -221,12 +220,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const t = translations[currentLang];
             const originalText = sendSupportBtn.innerText;
 
-            // دریافت اطلاعات فرستنده به صورت ایمن
             let senderInfo = "خارج از تلگرام (مروگر وب)";
             try {
                 if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
                     const u = tg.initDataUnsafe.user;
-                    senderInfo = `آیدی عددی: <code>${u.id}</code>\nنام: ${u.first_name || ''} ${u.last_name || ''}\nیوزرنیم: @${u.username || 'ندارد'}`;
+                    senderInfo = آیدی عددی: <code>${u.id}</code>\nنام: ${u.first_name || ''} ${u.last_name || ''}\nیوزرنیم: @${u.username || 'ندارد'};
                 }
             } catch(err) { console.log(err); }
 
@@ -252,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         else { alert(t.alertError); }
                     }).catch(() => alert(t.alertError)).finally(() => { sendSupportBtn.innerText = originalText; sendSupportBtn.disabled = false; });
                 } else {
-                    const finalMsg = `🛠️ <b>پشتیبانی بامبو میم</b>\n\n👤 <b>فرستنده:</b>\n${senderInfo}\n\n📝 <b>متن پیام:</b>\n${message}`;
+                    const finalMsg = 🛠️ <b>پشتیبانی بامبو میم</b>\n\n👤 <b>فرستنده:</b>\n${senderInfo}\n\n📝 <b>متن پیام:</b>\n${message};
                     fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {
                         method: 'POST', headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: finalMsg, parse_mode: "HTML" })
@@ -273,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 sendSupportBtn.innerText = "⏳...";
                 sendSupportBtn.disabled = true;
 
-                const finalMsg = `🤝 <b>درخواست همکاری جدید</b>\n\n👤 <b>فرستنده (سیستم):</b>\n${senderInfo}\n\n📢 فرم کانال: ${ch}\n👤 فرم آیدی: ${tgId}\n📝 توضیحات اضافه:\n${ex}`;
+                const finalMsg = 🤝 <b>درخواست همکاری جدید</b>\n\n👤 <b>فرستنده (سیستم):</b>\n${senderInfo}\n\n📢 فرم کانال: ${ch}\n👤 فرم آیدی: ${tgId}\n📝 توضیحات اضافه:\n${ex};
 
                 fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -328,8 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const file = e.target.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = (ev) => { selectedImageSrc = ev.target.result; goToStep2(); };
-            reader.readAsDataURL(file);
-        };
+            reader.readAsDataURL(file);};
     }
 
     const nextBtn = document.getElementById('next-btn');
@@ -338,6 +335,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const backBtn = document.getElementById('back-btn');
     if (backBtn) backBtn.onclick = () => { if(step2) step2.style.display = 'none'; if(step1) step1.style.display = 'block'; };
 
+    // =====================================
+    // منطق راه‌اندازی بوم و اضافه کردن واترمارک
+    // =====================================
     function goToStep2() {
         if(step1) step1.style.display = 'none'; 
         if(step2) step2.style.display = 'block';
@@ -354,11 +354,39 @@ document.addEventListener('DOMContentLoaded', () => {
             const scale = containerWidth / img.width;
             fCanvas.setWidth(containerWidth); fCanvas.setHeight(img.height * scale);
             fCanvas.setBackgroundImage(img, fCanvas.renderAll.bind(fCanvas), { scaleX: scale, scaleY: scale, originX: 'left', originY: 'top', crossOrigin: 'anonymous' });
+
+            // ساخت و اضافه کردن واترمارک به عنوان امضای پروژه
+            const watermark = new fabric.Text('@creat_meme_bot', {
+                left: containerWidth - 10,
+                top: (img.height * scale) - 10,
+                fontFamily: 'Poppins',
+                fontSize: 14,
+                fill: 'rgba(255, 255, 255, 0.65)',
+                stroke: 'rgba(0, 0, 0, 0.8)',
+                strokeWidth: 3,
+                paintFirst: 'stroke',
+                originX: 'right',
+                originY: 'bottom',
+                selectable: false, // غیرقابل تغییر
+                evented: false, // غیرقابل کلیک
+                fontWeight: 'bold',
+                name: 'watermark' // برای پیدا کردنش تو کد
+            });
+            fCanvas.add(watermark);
+
         }, { crossOrigin: 'anonymous' });
 
         fCanvas.on('selection:created', onTextSelected);
         fCanvas.on('selection:updated', onTextSelected);
         fCanvas.on('selection:cleared', onSelectionCleared);
+
+        // این بخش تضمین می‌کنه واترمارک همیشه بالاترین لایه بمونه
+        fCanvas.on('object:added', (e) => {
+            if (e.target && e.target.name !== 'watermark') {
+                const wm = fCanvas.getObjects().find(o => o.name === 'watermark');
+                if (wm) wm.bringToFront();
+            }
+        });
     }
 
     function onTextSelected(e) {
@@ -383,7 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const activeObj = fCanvas.getActiveObject();
         const textEditPanel = document.getElementById('text-edit-panel');
         const textInputField = document.getElementById('text-input-field');
-        if (activeObj && activeObj.type === 'text') {
+        if (activeObj && activeObj.type === 'text' && activeObj.name !== 'watermark') {
             if (textEditPanel) textEditPanel.style.transform = 'translateY(0)';
             if (textInputField) textInputField.value = activeObj.text || '';
             if (document.getElementById('font-family')) document.getElementById('font-family').value = activeObj.fontFamily || 'Lalezar';
@@ -436,14 +464,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const deleteTextBtn = document.getElementById('delete-text-btn');
     if(deleteTextBtn) {
-        deleteTextBtn.onclick = () => { const active = fCanvas.getActiveObject(); if (active) { fCanvas.remove(active); closeEditPanel(); fCanvas.discardActiveObject().renderAll(); } };
+        deleteTextBtn.onclick = () => { const active = fCanvas.getActiveObject(); if (active && active.name !== 'watermark') { fCanvas.remove(active); closeEditPanel(); fCanvas.discardActiveObject().renderAll(); } };
     }
 
     const downloadBtn = document.getElementById('download-btn');
     if(downloadBtn) {
         downloadBtn.addEventListener('click', () => {
-            const chatId = tg?.initDataUnsafe?.user?.id;
-            if (!chatId) return alert(currentLang === 'fa' ? "از داخل ربات تلگرام باز کنید" : "Open in bot");
+            const chatId = tg?.initDataUnsafe?.user?.id;if (!chatId) return alert(currentLang === 'fa' ? "از داخل ربات تلگرام باز کنید" : "Open in bot");
             if (fCanvas) {
                 fCanvas.discardActiveObject().renderAll();
                 const dataURL = fCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 3 });
