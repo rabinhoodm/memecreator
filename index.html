@@ -105,6 +105,30 @@
         </div>
     </div>
 
+    <div id="store-page" class="screen-layer glass-panel" style="display: none;">
+        <button id="back-from-store-btn" class="secondary-btn glass-btn-sec" style="margin-bottom: 20px; border-color: #9ca3af; color: #4b5563;">⬅️ بازگشت</button>
+        
+        <h1 id="store-title" style="color: #ca8a04; margin-top: 0; margin-bottom: 10px; font-weight: 900;">فروشگاه استارز ⭐</h1>
+        <p id="store-desc" style="font-size: 0.95rem; color: #555; margin-bottom: 20px; font-weight: bold;">
+            <span id="store-desc-text">موجودی فعلی شما:</span> 
+            <b id="store-balance-text" style="color:#ca8a04; font-size:1.3rem;">0</b> ⭐
+        </p>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px;">
+            <button class="buy-stars-btn main-btn" data-amount="50" style="background: linear-gradient(135deg, #fef08a, #eab308); color: #854d0e; border: none; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(234, 179, 8, 0.3);">⭐ 50</button>
+            <button class="buy-stars-btn main-btn" data-amount="100" style="background: linear-gradient(135deg, #fde047, #ca8a04); color: #713f12; border: none; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(202, 138, 4, 0.3);">⭐ 100</button>
+            <button class="buy-stars-btn main-btn" data-amount="150" style="background: linear-gradient(135deg, #facc15, #a16207); color: #fff; border: none; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(161, 98, 7, 0.3);">⭐ 150</button>
+            <button class="buy-stars-btn main-btn" data-amount="500" style="background: linear-gradient(135deg, #eab308, #713f12); color: #fff; border: none; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(113, 63, 18, 0.4);">⭐ 500</button>
+        </div>
+
+        <div class="terms-box">
+            <h4 id="store-terms-title" style="color: #ef4444; margin-top: 0; margin-bottom: 8px; font-size: 0.95rem;">قوانین و مقررات ⚠️</h4>
+            <p id="store-terms-desc" style="color: #7f1d1d; font-size: 0.8rem; margin: 0; line-height: 1.6; font-weight: 600;">
+                خریدهای شما با مسئولیت خودتون هستش و بخاطر شرایط و محدودیت‌های تلگرام درخواست برگشت وجه مقدور نمی‌باشد. لطفاً در خرید خود دقت کنید.
+            </p>
+        </div>
+    </div>
+
     <div id="support-modal" class="glass-panel" style="display: none; position: fixed; z-index: 9999; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 400px; padding: 20px;">
         <div style="display: flex; gap: 10px; margin-bottom: 15px;">
             <button id="tab-support-btn" class="main-btn glass-btn-primary" style="flex: 1; padding: 10px;">🛠️ پشتیبانی</button>
@@ -125,23 +149,6 @@
             <button id="send-support-btn" class="main-btn glass-btn-primary" style="flex: 1; background: linear-gradient(135deg, #facc15, #eab308); border: none; color: #fff;">ارسال 🚀</button>
             <button id="close-support-btn" class="secondary-btn glass-btn-sec" style="flex: 1; border-color: #ef4444; color: #ef4444;">بستن ❌</button>
         </div>
-    </div>
-
-    <div id="store-modal" class="glass-panel" style="display: none; position: fixed; z-index: 9999; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 400px; padding: 20px;">
-        <h3 id="store-title" style="color: #ca8a04; margin-top: 0; margin-bottom: 10px; font-weight: 900;">فروشگاه استارز ⭐</h3>
-        <p id="store-desc" style="font-size: 0.95rem; color: #555; margin-bottom: 20px; font-weight: bold;">
-            <span id="store-desc-text">موجودی فعلی شما:</span> 
-            <b id="store-balance-text" style="color:#ca8a04; font-size:1.3rem;">0</b> ⭐
-        </p>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-            <button class="buy-stars-btn main-btn" data-amount="50" style="background: linear-gradient(135deg, #fef08a, #eab308); color: #854d0e; border: none; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(234, 179, 8, 0.3);">⭐ 50</button>
-            <button class="buy-stars-btn main-btn" data-amount="100" style="background: linear-gradient(135deg, #fde047, #ca8a04); color: #713f12; border: none; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(202, 138, 4, 0.3);">⭐ 100</button>
-            <button class="buy-stars-btn main-btn" data-amount="150" style="background: linear-gradient(135deg, #facc15, #a16207); color: #fff; border: none; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(161, 98, 7, 0.3);">⭐ 150</button>
-            <button class="buy-stars-btn main-btn" data-amount="500" style="background: linear-gradient(135deg, #eab308, #713f12); color: #fff; border: none; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(113, 63, 18, 0.4);">⭐ 500</button>
-        </div>
-        
-        <button id="close-store-btn" class="secondary-btn glass-btn-sec" style="width: 100%; border-color: #ef4444; color: #ef4444;">بستن ❌</button>
     </div>
 
     <div id="text-edit-panel" class="bottom-sheet glass-panel" style="transform: translateY(120%);">

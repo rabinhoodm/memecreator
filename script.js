@@ -33,13 +33,14 @@ const translations = {
         alertError: "Oops! Something went wrong.",
         newTextDef: "New Text",
         
-        // ترجمه‌های جدید فروشگاه
+        // ترجمه‌های بخش فروشگاه
         storeTitle: "Stars Store ⭐",
         storeDescText: "Current Balance:",
-        closeStore: "Close ❌",
         confirmPurchase: "Do you want to purchase {amount} Stars?",
         processing: "⏳ Processing...",
-        purchaseSuccess: "Payment successful! Your wallet has been charged. ✅"
+        purchaseSuccess: "Payment successful! Your wallet has been charged. ✅",
+        storeTermsTitle: "Terms & Conditions ⚠️",
+        storeTermsDesc: "All purchases are at your own risk. Due to Telegram's rules, refund requests are not possible. Please proceed with caution."
     },
     fa: {
         langTxt: "EN", landingTitle: "بامبو میم 🎋", landingDesc: "خلاقیتت رو رها کن!",
@@ -62,13 +63,14 @@ const translations = {
         alertError: "اوه! مشکلی پیش آمد.",
         newTextDef: "متن جدید",
         
-        // ترجمه‌های جدید فروشگاه
+        // ترجمه‌های بخش فروشگاه
         storeTitle: "فروشگاه استارز ⭐",
         storeDescText: "موجودی فعلی شما:",
-        closeStore: "بستن ❌",
         confirmPurchase: "آیا از خرید {amount} استارز مطمئن هستید؟",
         processing: "⏳ در حال پردازش...",
-        purchaseSuccess: "پرداخت موفقیت‌آمیز بود! کیف پول شما شارژ شد. ✅"
+        purchaseSuccess: "پرداخت موفقیت‌آمیز بود! کیف پول شما شارژ شد. ✅",
+        storeTermsTitle: "قوانین و مقررات ⚠️",
+        storeTermsDesc: "خریدهای شما با مسئولیت خودتون هستش و بخاطر شرایط و محدودیت‌های تلگرام درخواست برگشت وجه مقدور نمی‌باشد. لطفاً در خرید خود دقت کنید."
     }
 };
 
@@ -82,6 +84,7 @@ const memesPerPage = 20;
 
 let activeTab = 'support';
 let userStars = 0; // موجودی کیف پول
+let previousScreen = null; // برای دکمه بازگشتِ فروشگاه
 
 document.addEventListener('DOMContentLoaded', function() {
     const splashScreen = document.getElementById('splash-screen');
@@ -97,7 +100,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const tabCollabBtn = document.getElementById('tab-collab-btn');
     const formSupportView = document.getElementById('form-support-view');
     const formCollabView = document.getElementById('form-collab-view');
-    
     const supportText = document.getElementById('support-text');
     const supportFileUpload = document.getElementById('support-file-upload');
     const supportImgBtn = document.getElementById('support-img-btn');
@@ -106,12 +108,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const collabTelegram = document.getElementById('collab-telegram');
     const collabExtra = document.getElementById('collab-extra');
 
-    // المان‌های فروشگاه (جدید)
+    // المان‌های صفحه فروشگاه
     const walletBtn = document.getElementById('wallet-btn');
     const walletBalance = document.getElementById('wallet-balance');
-    const storeModal = document.getElementById('store-modal');
+    const storePage = document.getElementById('store-page');
     const storeBalanceText = document.getElementById('store-balance-text');
-    const closeStoreBtn = document.getElementById('close-store-btn');
+    const backFromStoreBtn = document.getElementById('back-from-store-btn');
     const buyButtons = document.querySelectorAll('.buy-stars-btn');
 
     fetchTrendingMemes();
@@ -198,22 +200,40 @@ document.addEventListener('DOMContentLoaded', function() {
         // ترجمه‌های فروشگاه
         safeSetText('store-title', t.storeTitle);
         safeSetText('store-desc-text', t.storeDescText);
-        safeSetText('close-store-btn', t.closeStore);
+        safeSetText('back-from-store-btn', "⬅️ " + t.backBtn);
+        safeSetText('store-terms-title', t.storeTermsTitle);
+        safeSetText('store-terms-desc', t.storeTermsDesc);
     }
 
     // =====================================
-    // منطق کیف پول و فروشگاه استارز
+    // منطق صفحه‌ی اختصاصی فروشگاه استارز
     // =====================================
     if (walletBtn) {
         walletBtn.onclick = function() {
-            if (storeModal) storeModal.style.display = 'block';
+            // ذخیره صفحه‌ای که در آن هستیم تا بعداً بتونیم برگردیم
+            if (landingPage && landingPage.style.display !== 'none') {
+                previousScreen = landingPage;
+            } else if (appContainer && appContainer.style.display !== 'none') {
+                previousScreen = appContainer;
+            }
+            
+            if (landingPage) landingPage.style.display = 'none';
+            if (appContainer) appContainer.style.display = 'none';
+            if (storePage) storePage.style.display = 'block';
             if (storeBalanceText) storeBalanceText.innerText = userStars;
         };
     }
 
-    if (closeStoreBtn) {
-        closeStoreBtn.onclick = function() {
-            if (storeModal) storeModal.style.display = 'none';
+    if (backFromStoreBtn) {
+        backFromStoreBtn.onclick = function() {
+            if (storePage) storePage.style.display = 'none';
+            
+            // بازگشت هوشمند به صفحه قبلی
+            if (previousScreen) {
+                previousScreen.style.display = 'block';
+            } else if (landingPage) {
+                landingPage.style.display = 'block'; // حالت پیش‌فرض
+            }
         };
     }
 
@@ -223,15 +243,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const amount = parseInt(this.getAttribute('data-amount'));
             const t = translations[currentLang];
             
-            // پیام تاییدیه قبل از پرداخت
             if (confirm(t.confirmPurchase.replace('{amount}', amount))) {
                 const originalHTML = this.innerHTML;
                 this.innerHTML = t.processing;
                 this.disabled = true;
 
-                // شبیه‌سازی درگاه تلگرام (2 ثانیه تاخیر)
+                // شبیه‌سازی درگاه پرداخت (2 ثانیه تاخیر)
                 setTimeout(function() {
-                    userStars += amount; // افزایش موجودی کاربر
+                    userStars += amount; 
                     
                     if (walletBalance) walletBalance.innerText = userStars;
                     if (storeBalanceText) storeBalanceText.innerText = userStars;
