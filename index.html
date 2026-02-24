@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bamboo Meme Maker</title>
+    <title>Bamboo Meme Maker | Pro Edition</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,115 +15,69 @@
 </head>
 <body>
 
+    <div class="bg-3d-container">
+        <div class="shape-glass blob-1"></div>
+        <div class="shape-glass blob-2"></div>
+        <div class="shape-glass blob-3"></div>
+    </div>
+
     <button id="lang-btn" class="glass-btn">
         <span class="lang-icon">🌐</span>
         <span id="lang-text">EN</span>
     </button>
 
-    <div id="splash-screen" class="screen-layer active">
-        <div class="loader">
-            <div class="bamboo-stick"></div>
-            <div class="bamboo-stick delay-1"></div>
-            <div class="bamboo-stick delay-2"></div>
-        </div>
-        <h2 class="splash-text">Bamboo Factory...</h2>
-    </div>
-
-    <div id="landing-page" class="screen-layer glass-panel" style="display: none;">
-        <h1 id="landing-title">بامبو میم 🎋</h1>
-        <p id="landing-desc" class="subtitle">خلاقیتت رو رها کن!</p>
+    <div id="landing-page" class="screen-layer glass-panel">
+        <div class="neon-logo">🎋</div>
+        <h1 id="landing-title">بامبو میم</h1>
+        <p id="landing-desc" class="subtitle">نسخه حرفه‌ای نئون</p>
         
         <div class="menu-buttons">
-            <button id="start-app-btn" class="main-btn glass-btn-primary">🎨 ورود به میم‌ساز</button>
-            <button id="support-btn" class="secondary-btn glass-btn-sec">💬 همکاری و پشتیبانی</button>
-            <button id="channel-btn" class="secondary-btn glass-btn-sec">📢 کانال ما</button>
+            <button id="start-app-btn" class="main-btn glass-btn-primary">🎨 ورود به کارخانه میم</button>
+            <button id="support-btn" class="secondary-btn glass-btn-sec">💬 پشتیبانی سریع</button>
+            <button id="channel-btn" class="secondary-btn glass-btn-sec">📢 جامعه میم‌سازها</button>
+            <button id="sponsor-btn" class="secondary-btn glass-btn-sec" style="border-color: #facc15; color: #facc15;">🤝 درخواست اسپانسری</button>
+        </div>
+    </div>
+
+    <div id="sponsor-modal" class="glass-panel" style="display: none; position: fixed; z-index: 999; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 400px; padding: 20px;">
+        <h3 style="color: #facc15; text-align: center; margin-bottom: 10px; margin-top: 0;">درخواست اسپانسری 💎</h3>
+        <p style="font-size: 0.85rem; color: #ccc; text-align: center; margin-bottom: 15px;">مشخصات و درخواست خودتون رو بنویسید تا مستقیم برای مدیریت ارسال بشه.</p>
+        
+        <textarea id="sponsor-text" class="glass-input" rows="4" placeholder="سلام، من مدیر کانال X هستم و درخواست همکاری دارم..." style="width: 100%; margin-bottom: 15px; padding: 10px; box-sizing: border-box; resize: none;"></textarea>
+        
+        <div style="display: flex; gap: 10px;">
+            <button id="send-sponsor-btn" class="main-btn glass-btn-primary" style="flex: 1; border-color: #facc15; color: #facc15;">🚀 ارسال پیام</button>
+            <button id="close-sponsor-btn" class="secondary-btn glass-btn-sec" style="flex: 1; border-color: #ff4d4d; color: #ff4d4d;">❌ بستن</button>
         </div>
     </div>
 
     <div id="app-container" class="screen-layer glass-panel" style="display: none;">
-        <h1 id="title-text">میم‌ساز حرفه‌ای 🎨</h1>
+        <h1 id="title-text" style="font-size: 1.5rem;">ویرایشگر میم 🎨</h1>
         
         <div id="step-1">
             <input type="file" id="image-upload" accept="image/*" style="display: none;">
-            
-            <button id="upload-btn" class="main-btn glass-btn-green" style="margin-bottom: 15px;">
-                📸 آپلود از گالری گوشی
-            </button>
-
-            <input type="text" id="search-input" placeholder="🔍 جستجوی میم‌های ترند..." class="search-box glass-input">
-
-            <div class="gallery glass-gallery" id="template-gallery">
-                <p id="loading-text" style="color: #555; font-weight: bold; width: 100%;">⏳ در حال دریافت تصاویر...</p>
+            <button id="upload-btn" class="main-btn glass-btn-green" style="margin-bottom: 20px;">📸 انتخاب عکس از گالری</button>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="🔍 جستجوی قالب..." class="search-box glass-input">
             </div>
-            
-            <button id="load-more-btn" class="secondary-btn glass-btn-sec hidden" style="width: 100%; margin-top: 10px;">⬇️ نمایش بیشتر</button>
-            <button id="next-btn" class="main-btn glass-btn-primary" disabled style="margin-top: 15px;">مرحله بعد ➡️</button>
+            <div class="gallery glass-gallery" id="template-gallery"></div>
+            <button id="next-btn" class="main-btn glass-btn-primary" disabled style="margin-top: 20px;">ادامه ➡️</button>
         </div>
 
         <div id="step-2" style="display: none;">
             <div class="canvas-wrapper">
                 <canvas id="meme-canvas"></canvas>
             </div>
-            
-            <div class="floating-toolbar glass-toolbar">
-                <button id="add-text-btn" class="tool-btn add">
-                    <span class="btn-icon">T+</span>
-                    <span class="btn-label" id="add-text-label">افزودن متن</span>
-                </button>
-                
+            <div class="floating-toolbar glass-toolbar"><button id="add-text-btn" class="tool-btn add"><span class="btn-icon">➕</span> متن جدید</button>
                 <div id="edit-tools" style="display: none; width: 100%; gap: 10px; justify-content: space-between;">
-                    <button id="edit-text-btn" class="tool-btn" style="background: #3b82f6; width: 50%; justify-content: center;">
-                        <span class="btn-icon">✏️ ویرایش</span>
-                    </button>
-                    <button id="delete-text-btn" class="tool-btn delete" style="width: 50%; margin: 0; border-radius: 15px;">
-                        <span class="btn-icon">🗑️ حذف</span>
-                    </button>
+                    <button id="edit-text-btn" class="tool-btn" style="color: #3b82f6;"><span class="btn-icon">✏️ ویرایش</span></button>
+                    <button id="delete-text-btn" class="tool-btn delete"><span class="btn-icon">🗑️ حذف</span></button>
                 </div>
             </div>
-            
-            <div class="action-buttons"><button id="back-btn" class="secondary-btn glass-btn-sec">⬅️ بازگشت</button>
-                <button id="download-btn" class="main-btn glass-btn-primary telegram-btn">⬇️ ارسال به بات</button>
+            <div class="action-buttons">
+                <button id="back-btn" class="secondary-btn glass-btn-sec">⬅️ بازگشت</button>
+                <button id="download-btn" class="main-btn glass-btn-primary telegram-btn">⬇️ ارسال نهایی</button>
             </div>
-            <button id="share-btn" class="share-btn-full glass-btn-outline">🚀 اشتراک‌گذاری</button>
-        </div>
-    </div>
-
-    <div id="text-edit-panel" class="bottom-sheet glass-panel" style="transform: translateY(120%);">
-        <div class="sheet-handle"></div>
-        <h3 id="panel-title">ویرایش متن ✍️</h3>
-        
-        <div style="display: flex; gap: 8px; margin-bottom: 15px;">
-            <textarea id="text-input-field" class="glass-input text-area-main" rows="2" placeholder="متن خود را اینجا بنویسید..." style="margin-bottom: 0; width: 80%;"></textarea>
-            <button id="inline-close-btn" class="main-btn glass-btn-primary" style="width: 20%; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 24px;">✔️</button>
-        </div>
-        
-        <div class="control-group">
-            <label id="font-label">فونت:</label>
-            <select id="font-family" class="glass-input">
-                <option value="Lalezar">لاله‌زار (ضخیم فارسی)</option>
-                <option value="Vazirmatn">وزیرمتن (خوانا)</option>
-                <option value="Impact">Impact (میم انگلیسی)</option>
-                <option value="Poppins">Poppins (مدرن)</option>
-            </select>
-        </div>
-        
-        <div class="control-group">
-            <label id="size-label">اندازه:</label>
-            <input type="range" id="font-size" min="15" max="150" value="40" class="glass-slider">
-        </div>
-
-        <div class="color-controls">
-            <div class="color-picker-wrapper" title="رنگ متن">
-                <input type="color" id="text-color" value="#ffffff">
-                <div class="color-icon" id="color-indicator" style="background-color: #ffffff;"></div>
-            </div>
-            <span style="font-weight: bold; color: var(--bamboo-dark);" id="color-lbl">رنگ متن</span>
-            
-            <div class="color-picker-wrapper" title="رنگ حاشیه">
-                <input type="color" id="stroke-color" value="#000000">
-                <div class="color-icon" id="stroke-indicator" style="background-color: #000000;"></div>
-            </div>
-            <span style="font-weight: bold; color: var(--bamboo-dark);" id="stroke-lbl">حاشیه</span>
         </div>
     </div>
 
