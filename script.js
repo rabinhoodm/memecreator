@@ -7,7 +7,9 @@ try {
         tg = window.Telegram.WebApp;
         tg.expand();
     }
-} catch(e) { console.log("Telegram WebApp not found"); }
+} catch (e) {
+    console.log("Telegram WebApp error", e);
+}
 
 const translations = {
     en: {
@@ -71,27 +73,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchTrendingMemes();
 
-    // سیستم ضدگلوله برای عبور از لودینگ
     setTimeout(() => {
         try {
-            if (splashScreen) splashScreen.style.display = 'none';
-            if (landingPage) landingPage.style.display = 'block';
+            if (splashScreen) splashScreen.style.display = 'none';if (landingPage) landingPage.style.display = 'block';
             updateLanguage(currentLang);
         } catch (error) {
-            console.error("Error bypassing loader:", error);
+            console.error(error);
             if (splashScreen) splashScreen.style.display = 'none';
             if (landingPage) landingPage.style.display = 'block';
         }
     }, 2500);
 
-    if (document.getElementById('start-app-btn')) {
-        document.getElementById('start-app-btn').addEventListener('click', () => {
+    const startAppBtn = document.getElementById('start-app-btn');
+    if (startAppBtn) {
+        startAppBtn.addEventListener('click', () => {
             if (landingPage) landingPage.style.display = 'none';
             if (appContainer) appContainer.style.display = 'block';
         });
     }
 
-    // دکمه جدید برای برگشت به منوی اصلی
     if (backToMenuBtn) {
         backToMenuBtn.addEventListener('click', () => {
             if (appContainer) appContainer.style.display = 'none';
@@ -99,20 +99,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (document.getElementById('channel-btn')) document.getElementById('channel-btn').addEventListener('click', () => window.open('https://t.me/bamboo_network', '_blank'));
+    const channelBtn = document.getElementById('channel-btn');
+    if (channelBtn) {
+        channelBtn.addEventListener('click', () => window.open('https://t.me/bamboo_network', '_blank'));
+    }
 
-    if (document.getElementById('lang-btn')) {
-        document.getElementById('lang-btn').addEventListener('click', () => {
+    const langBtn = document.getElementById('lang-btn');
+    if (langBtn) {
+        langBtn.addEventListener('click', () => {
             currentLang = currentLang === 'fa' ? 'en' : 'fa';
             updateLanguage(currentLang);
         });
     }
 
+    function safeSetText(id, text) {
+        const el = document.getElementById(id);
+        if (el) el.innerText = text;
+    }
+
+    function safeSetPlaceholder(id, text) {
+        const el = document.getElementById(id);
+        if (el) el.placeholder = text;
+    }
+
     function updateLanguage(lang) {
         const t = translations[lang];
-        const safeSetText = (id, text) => { const el = document.getElementById(id); if (el) el.innerText = text; };
-        const safeSetPlaceholder = (id, text) => { const el = document.getElementById(id); if (el) el.placeholder = text; };
-
         const htmlTag = document.getElementById('html-tag');
         if (htmlTag) htmlTag.dir = t.dir;
 
@@ -159,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (sendSupportBtn) {
         sendSupportBtn.onclick = () => {
-            const message = supportText.value.trim();
+            const message = supportText ? supportText.value.trim() : "";
             const t = translations[currentLang];
             
             if (!message) { alert(t.alertEmpty); return; }
@@ -168,9 +179,9 @@ document.addEventListener('DOMContentLoaded', () => {
             sendSupportBtn.innerText = "⏳...";
             sendSupportBtn.disabled = true;
 
-            const finalMessage = 🌟 <b>پشتیبانی و همکاری (بامبو میم)</b>\n\n💬 پیام:\n${message};
+            const finalMessage = "🌟 <b>پشتیبانی و همکاری (بامبو میم)</b>\n\n💬 پیام:\n" + message;
 
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {method: 'POST',
+            fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: finalMessage, parse_mode: "HTML" })
             })
@@ -178,9 +189,11 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 if (data.ok) {
                     alert(t.alertSuccess);
-                    supportModal.style.display = 'none';
-                    supportText.value = '';
-                } else { alert(t.alertError); }
+                    if (supportModal) supportModal.style.display = 'none';
+                    if (supportText) supportText.value = '';
+                } else { 
+                    alert(t.alertError); 
+                }
             })
             .catch(() => alert(t.alertError))
             .finally(() => {
@@ -193,7 +206,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function fetchTrendingMemes() {
         try {
             fetch('https://api.imgflip.com/get_memes').then(res => res.json()).then(data => {
-                if (data.success) { allMemes = data.data.memes; filteredMemes = [...allMemes]; renderGallery(); }
+                if (data.success) { 
+                    allMemes = data.data.memes; 
+                    filteredMemes = [...allMemes]; 
+                    renderGallery(); 
+                }
             }).catch(e => console.log(e));
         } catch(e) {}
     }
@@ -204,43 +221,64 @@ document.addEventListener('DOMContentLoaded', () => {
         const memesToShow = filteredMemes.slice((currentPage - 1) * memesPerPage, currentPage * memesPerPage);
         memesToShow.forEach(meme => {
             const img = document.createElement('img');
-            img.src = meme.url; img.className = 'template-img'; img.crossOrigin = "anonymous";
+            img.src = meme.url; 
+            img.className = 'template-img'; 
+            img.crossOrigin = "anonymous";
             img.onclick = () => {
                 document.querySelectorAll('.template-img').forEach(i => i.classList.remove('selected'));
-                img.classList.add('selected'); selectedImageSrc = img.src;
-                if (document.getElementById('next-btn')) document.getElementById('next-btn').disabled = false;
+                img.classList.add('selected'); 
+                selectedImageSrc = img.src;
+                const nextBtn = document.getElementById('next-btn');
+                if (nextBtn) nextBtn.disabled = false;
             };
             templateGallery.appendChild(img);
         });
-        if (document.getElementById('load-more-btn')) document.getElementById('load-more-btn').classList.toggle('hidden', (currentPage * memesPerPage) >= filteredMemes.length);
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        if (loadMoreBtn) {
+            loadMoreBtn.classList.toggle('hidden', (currentPage * memesPerPage) >= filteredMemes.length);
+        }
     }
 
-    if (document.getElementById('search-input')) {
-        document.getElementById('search-input').oninput = (e) => {
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.oninput = (e) => {
             filteredMemes = allMemes.filter(m => m.name.toLowerCase().includes(e.target.value.toLowerCase()));
-            currentPage = 1; renderGallery();
+            currentPage = 1; 
+            renderGallery();
         };
     }
     
-    if (document.getElementById('load-more-btn')) {
-        document.getElementById('load-more-btn').onclick = () => { currentPage++; renderGallery(); };
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    if (loadMoreBtn) {
+        loadMoreBtn.onclick = () => { currentPage++; renderGallery(); };
     }
 
-    if (document.getElementById('upload-btn')) document.getElementById('upload-btn').onclick = () => document.getElementById('image-upload').click();
-    if (document.getElementById('image-upload')) {
-        document.getElementById('image-upload').onchange = (e) => {
-            const file = e.target.files[0]; if (!file) return;
+    const uploadBtn = document.getElementById('upload-btn');
+    const imageUpload = document.getElementById('image-upload');
+    if (uploadBtn && imageUpload) {
+        uploadBtn.onclick = () => imageUpload.click();
+        imageUpload.onchange = (e) => {
+            const file = e.target.files[0]; 
+            if (!file) return;
             const reader = new FileReader();
-            reader.onload = (ev) => { selectedImageSrc = ev.target.result; goToStep2(); };
+            reader.onload = (ev) => { 
+                selectedImageSrc = ev.target.result; 
+                goToStep2(); 
+            };
             reader.readAsDataURL(file);
         };
     }
 
-    if (document.getElementById('next-btn')) document.getElementById('next-btn').onclick = goToStep2;
-    if (document.getElementById('back-btn')) document.getElementById('back-btn').onclick = () => { 
-        if(step2) step2.style.display = 'none'; 
-        if(step1) step1.style.display = 'block'; 
-    };
+    const nextBtn = document.getElementById('next-btn');
+    if (nextBtn) nextBtn.onclick = goToStep2;
+
+    const backBtn = document.getElementById('back-btn');
+    if (backBtn) {
+        backBtn.onclick = () => { 
+            if(step2) step2.style.display = 'none'; 
+            if(step1) step1.style.display = 'block'; 
+        };
+    }
 
     function goToStep2() {
         if(step1) step1.style.display = 'none'; 
@@ -251,12 +289,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function initFabricCanvas(imgSrc) {
         if (fCanvas) fCanvas.dispose();
         fCanvas = new fabric.Canvas('meme-canvas');
-        const containerWidth = document.querySelector('.canvas-wrapper').clientWidth;
+        const canvasWrapper = document.querySelector('.canvas-wrapper');
+        const containerWidth = canvasWrapper ? canvasWrapper.clientWidth : 300;
         
         fabric.Image.fromURL(imgSrc, (img) => {
             const scale = containerWidth / img.width;
-            fCanvas.setWidth(containerWidth); fCanvas.setHeight(img.height * scale);
-            fCanvas.setBackgroundImage(img, fCanvas.renderAll.bind(fCanvas), {scaleX: scale, scaleY: scale, originX: 'left', originY: 'top', crossOrigin: 'anonymous'
+            fCanvas.setWidth(containerWidth); 
+            fCanvas.setHeight(img.height * scale);
+            fCanvas.setBackgroundImage(img, fCanvas.renderAll.bind(fCanvas), {
+                scaleX: scale, scaleY: scale, originX: 'left', originY: 'top', crossOrigin: 'anonymous'
             });
         }, { crossOrigin: 'anonymous' });
 
@@ -285,12 +326,23 @@ document.addEventListener('DOMContentLoaded', () => {
             if (textEditPanel) textEditPanel.style.transform = 'translateY(0)';
             
             if (textInputField) textInputField.value = activeObj.text || '';
-            if (document.getElementById('font-family')) document.getElementById('font-family').value = activeObj.fontFamily || 'Lalezar';
-            if (document.getElementById('font-size')) document.getElementById('font-size').value = activeObj.fontSize || 40;
-            if (document.getElementById('text-color')) document.getElementById('text-color').value = activeObj.fill || '#ffffff';
-            if (document.getElementById('color-indicator')) document.getElementById('color-indicator').style.backgroundColor = activeObj.fill || '#ffffff';
-            if (document.getElementById('stroke-color')) document.getElementById('stroke-color').value = activeObj.stroke || '#000000';
-            if (document.getElementById('stroke-indicator')) document.getElementById('stroke-indicator').style.backgroundColor = activeObj.stroke || '#000000';
+            const fontFamilySel = document.getElementById('font-family');
+            if (fontFamilySel) fontFamilySel.value = activeObj.fontFamily || 'Lalezar';
+            
+            const fontSizeRange = document.getElementById('font-size');
+            if (fontSizeRange) fontSizeRange.value = activeObj.fontSize || 40;
+            
+            const textColor = document.getElementById('text-color');
+            if (textColor) textColor.value = activeObj.fill || '#ffffff';
+            
+            const colorIndicator = document.getElementById('color-indicator');
+            if (colorIndicator) colorIndicator.style.backgroundColor = activeObj.fill || '#ffffff';
+            
+            const strokeColor = document.getElementById('stroke-color');
+            if (strokeColor) strokeColor.value = activeObj.stroke || '#000000';
+            
+            const strokeIndicator = document.getElementById('stroke-indicator');
+            if (strokeIndicator) strokeIndicator.style.backgroundColor = activeObj.stroke || '#000000';
             
             setTimeout(() => { if(textInputField) textInputField.focus(); }, 300);
         }
@@ -323,10 +375,41 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    if(document.getElementById('font-family')) document.getElementById('font-family').onchange = (e) => { const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('fontFamily', e.target.value); fCanvas.renderAll(); } };
-    if(document.getElementById('font-size')) document.getElementById('font-size').oninput = (e) => { const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('fontSize', parseInt(e.target.value)); fCanvas.renderAll(); } };
-    if(document.getElementById('text-color')) document.getElementById('text-color').oninput = (e) => { if(document.getElementById('color-indicator')) document.getElementById('color-indicator').style.backgroundColor = e.target.value; const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('fill', e.target.value); fCanvas.renderAll(); } };
-    if(document.getElementById('stroke-color')) document.getElementById('stroke-color').oninput = (e) => { if(document.getElementById('stroke-indicator')) document.getElementById('stroke-indicator').style.backgroundColor = e.target.value; const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('stroke', e.target.value); fCanvas.renderAll(); } };
+    const fontFamilySel = document.getElementById('font-family');
+    if(fontFamilySel) {
+        fontFamilySel.onchange = (e) => { 
+            const active = fCanvas.getActiveObject(); 
+            if (active && active.type === 'text') { active.set('fontFamily', e.target.value); fCanvas.renderAll(); } 
+        };
+    }
+    
+    const fontSizeRange = document.getElementById('font-size');
+    if(fontSizeRange) {
+        fontSizeRange.oninput = (e) => { 
+            const active = fCanvas.getActiveObject(); 
+            if (active && active.type === 'text') { active.set('fontSize', parseInt(e.target.value)); fCanvas.renderAll(); } 
+        };
+    }
+    
+    const textColor = document.getElementById('text-color');
+    if(textColor) {
+        textColor.oninput = (e) => { 
+            const colorIndicator = document.getElementById('color-indicator');
+            if(colorIndicator) colorIndicator.style.backgroundColor = e.target.value; 
+            const active = fCanvas.getActiveObject(); 
+            if (active && active.type === 'text') { active.set('fill', e.target.value); fCanvas.renderAll(); } 
+        };
+    }
+    
+    const strokeColor = document.getElementById('stroke-color');
+    if(strokeColor) {
+        strokeColor.oninput = (e) => { 
+            const strokeIndicator = document.getElementById('stroke-indicator');
+            if(strokeIndicator) strokeIndicator.style.backgroundColor = e.target.value; 
+            const active = fCanvas.getActiveObject(); 
+            if (active && active.type === 'text') { active.set('stroke', e.target.value); fCanvas.renderAll(); } 
+        };
+    }
 
     function closeEditPanel() {
         if(textEditPanel) textEditPanel.style.transform = 'translateY(120%)';
@@ -338,30 +421,46 @@ document.addEventListener('DOMContentLoaded', () => {
     if(deleteTextBtn) {
         deleteTextBtn.onclick = () => {
             const active = fCanvas.getActiveObject();
-            if (active) { fCanvas.remove(active); closeEditPanel(); fCanvas.discardActiveObject().renderAll(); }
+            if (active) { 
+                fCanvas.remove(active); 
+                closeEditPanel(); 
+                fCanvas.discardActiveObject().renderAll(); 
+            }
         };
     }
 
-    if(document.getElementById('download-btn')) {
-        document.getElementById('download-btn').addEventListener('click', () => {
-            const chatId = tg?.initDataUnsafe?.user?.id;if (!chatId) return alert(currentLang === 'fa' ? "از داخل ربات تلگرام باز کنید" : "Open in bot");
-            fCanvas.discardActiveObject().renderAll();
-            const dataURL = fCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 3 });
-            fetch(dataURL).then(res => res.blob()).then(blob => {
-                const fd = new FormData(); fd.append('chat_id', chatId); fd.append('photo', blob, 'meme.png');
-                fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd }).then(() => tg.close());
-            });
+    const downloadBtn = document.getElementById('download-btn');
+    if(downloadBtn) {
+        downloadBtn.addEventListener('click', () => {
+            const chatId = tg?.initDataUnsafe?.user?.id;
+            if (!chatId) return alert(currentLang === 'fa' ? "از داخل ربات تلگرام باز کنید" : "Open in bot");
+            if (fCanvas) {
+                fCanvas.discardActiveObject().renderAll();
+                const dataURL = fCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 3 });
+                fetch(dataURL).then(res => res.blob()).then(blob => {
+                    const fd = new FormData(); 
+                    fd.append('chat_id', chatId); 
+                    fd.append('photo', blob, 'meme.png');
+                    fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendPhoto", { method: 'POST', body: fd })
+                    .then(() => { if (tg) tg.close(); });
+                });
+            }
         });
     }
 
-    if(document.getElementById('share-btn')) {
-        document.getElementById('share-btn').addEventListener('click', () => {
-            fCanvas.discardActiveObject().renderAll();
-            const dataURL = fCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 3 });
-            fetch(dataURL).then(res => res.blob()).then(async blob => {
-                const file = new File([blob], "meme.png", { type: "image/png" });
-                if (navigator.canShare && navigator.canShare({ files: [file] })) navigator.share({ files: [file] });
-            });
+    const shareBtn = document.getElementById('share-btn');
+    if(shareBtn) {
+        shareBtn.addEventListener('click', () => {
+            if (fCanvas) {
+                fCanvas.discardActiveObject().renderAll();
+                const dataURL = fCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 3 });
+                fetch(dataURL).then(res => res.blob()).then(async blob => {
+                    const file = new File([blob], "meme.png", { type: "image/png" });
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        navigator.share({ files: [file] });
+                    }
+                });
+            }
         });
     }
 });
