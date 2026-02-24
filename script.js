@@ -31,7 +31,15 @@ const translations = {
         alertSuccessCollab: "Your request has been received! ✅",
         alertSuccessSupport: "Your message has been sent! ✅",
         alertError: "Oops! Something went wrong.",
-        newTextDef: "New Text"
+        newTextDef: "New Text",
+        
+        // ترجمه‌های جدید فروشگاه
+        storeTitle: "Stars Store ⭐",
+        storeDescText: "Current Balance:",
+        closeStore: "Close ❌",
+        confirmPurchase: "Do you want to purchase {amount} Stars?",
+        processing: "⏳ Processing...",
+        purchaseSuccess: "Payment successful! Your wallet has been charged. ✅"
     },
     fa: {
         langTxt: "EN", landingTitle: "بامبو میم 🎋", landingDesc: "خلاقیتت رو رها کن!",
@@ -52,7 +60,15 @@ const translations = {
         alertSuccessCollab: "درخواست شما ثبت شد! ✅",
         alertSuccessSupport: "پیام شما ارسال شد! ✅",
         alertError: "اوه! مشکلی پیش آمد.",
-        newTextDef: "متن جدید"
+        newTextDef: "متن جدید",
+        
+        // ترجمه‌های جدید فروشگاه
+        storeTitle: "فروشگاه استارز ⭐",
+        storeDescText: "موجودی فعلی شما:",
+        closeStore: "بستن ❌",
+        confirmPurchase: "آیا از خرید {amount} استارز مطمئن هستید؟",
+        processing: "⏳ در حال پردازش...",
+        purchaseSuccess: "پرداخت موفقیت‌آمیز بود! کیف پول شما شارژ شد. ✅"
     }
 };
 
@@ -63,7 +79,9 @@ let allMemes = [];
 let filteredMemes = [];
 let currentPage = 1;
 const memesPerPage = 20;
+
 let activeTab = 'support';
+let userStars = 0; // موجودی کیف پول
 
 document.addEventListener('DOMContentLoaded', function() {
     const splashScreen = document.getElementById('splash-screen');
@@ -73,6 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const step2 = document.getElementById('step-2');
     const templateGallery = document.getElementById('template-gallery');
     
+    // المان‌های پشتیبانی
     const supportModal = document.getElementById('support-modal');
     const tabSupportBtn = document.getElementById('tab-support-btn');
     const tabCollabBtn = document.getElementById('tab-collab-btn');
@@ -83,14 +102,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const supportFileUpload = document.getElementById('support-file-upload');
     const supportImgBtn = document.getElementById('support-img-btn');
     const supportFileName = document.getElementById('support-file-name');
-    
     const collabChannel = document.getElementById('collab-channel');
     const collabTelegram = document.getElementById('collab-telegram');
     const collabExtra = document.getElementById('collab-extra');
 
+    // المان‌های فروشگاه (جدید)
+    const walletBtn = document.getElementById('wallet-btn');
+    const walletBalance = document.getElementById('wallet-balance');
+    const storeModal = document.getElementById('store-modal');
+    const storeBalanceText = document.getElementById('store-balance-text');
+    const closeStoreBtn = document.getElementById('close-store-btn');
+    const buyButtons = document.querySelectorAll('.buy-stars-btn');
+
     fetchTrendingMemes();
 
-    // عبور کاملا ایمن از لودینگ
     setTimeout(function() {
         try {
             if (splashScreen) splashScreen.style.display = 'none';
@@ -169,8 +194,60 @@ document.addEventListener('DOMContentLoaded', function() {
         safeSetPlaceholder('collab-extra', t.colExtraPlc);
         safeSetText('send-support-btn', t.supportSend);
         safeSetText('close-support-btn', t.supportClose);
+        
+        // ترجمه‌های فروشگاه
+        safeSetText('store-title', t.storeTitle);
+        safeSetText('store-desc-text', t.storeDescText);
+        safeSetText('close-store-btn', t.closeStore);
     }
 
+    // =====================================
+    // منطق کیف پول و فروشگاه استارز
+    // =====================================
+    if (walletBtn) {
+        walletBtn.onclick = function() {
+            if (storeModal) storeModal.style.display = 'block';
+            if (storeBalanceText) storeBalanceText.innerText = userStars;
+        };
+    }
+
+    if (closeStoreBtn) {
+        closeStoreBtn.onclick = function() {
+            if (storeModal) storeModal.style.display = 'none';
+        };
+    }
+
+    // شبیه‌سازی خرید با کلیک روی بسته‌های استارز
+    buyButtons.forEach(function(btn) {
+        btn.onclick = function() {
+            const amount = parseInt(this.getAttribute('data-amount'));
+            const t = translations[currentLang];
+            
+            // پیام تاییدیه قبل از پرداخت
+            if (confirm(t.confirmPurchase.replace('{amount}', amount))) {
+                const originalHTML = this.innerHTML;
+                this.innerHTML = t.processing;
+                this.disabled = true;
+
+                // شبیه‌سازی درگاه تلگرام (2 ثانیه تاخیر)
+                setTimeout(function() {
+                    userStars += amount; // افزایش موجودی کاربر
+                    
+                    if (walletBalance) walletBalance.innerText = userStars;
+                    if (storeBalanceText) storeBalanceText.innerText = userStars;
+                    
+                    alert(t.purchaseSuccess);
+                    
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
+                }, 2000);
+            }
+        };
+    });
+
+    // =====================================
+    // منطق پشتیبانی و همکاری (بدون تغییر)
+    // =====================================
     const supportBtnMenu = document.getElementById('support-btn');
     if (supportBtnMenu) {
         supportBtnMenu.onclick = function() { if(supportModal) supportModal.style.display = 'block'; };
@@ -357,7 +434,6 @@ document.addEventListener('DOMContentLoaded', function() {
             fCanvas.setWidth(containerWidth); fCanvas.setHeight(img.height * scale);
             fCanvas.setBackgroundImage(img, fCanvas.renderAll.bind(fCanvas), { scaleX: scale, scaleY: scale, originX: 'left', originY: 'top', crossOrigin: 'anonymous' });
 
-            // اضافه کردن واترمارک
             const watermark = new fabric.Text('@creat_meme_bot', {
                 left: containerWidth - 10,
                 top: (img.height * scale) - 10,
@@ -382,7 +458,6 @@ document.addEventListener('DOMContentLoaded', function() {
         fCanvas.on('selection:updated', onTextSelected);
         fCanvas.on('selection:cleared', onSelectionCleared);
 
-        // واترمارک رو همیشه بالا نگه دار
         fCanvas.on('object:added', function(e) {
             if (e.target && e.target.name !== 'watermark') {
                 const objs = fCanvas.getObjects();
