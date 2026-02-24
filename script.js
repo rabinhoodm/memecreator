@@ -37,7 +37,15 @@ var translations = {
         processing: "⏳ Processing...",
         purchaseSuccess: "Payment successful! Your wallet has been charged. ✅",
         storeTermsTitle: "Terms & Conditions ⚠️",
-        storeTermsDesc: "All purchases are at your own risk. Due to Telegram's rules, refund requests are not possible. Please proceed with caution."
+        storeTermsDesc: "All purchases are at your own risk. Due to Telegram's rules, refund requests are not possible. Please proceed with caution.",
+        
+        // ترجمه‌های جدید جوین اجباری
+        joinTitle: "Mandatory Join 🚨",
+        joinDesc: "To use the app, please join our channel first.",
+        joinBtn: "📢 Join Channel",
+        checkJoinBtn: "🔄 I Joined (Check)",
+        closeJoinBtn: "❌ Close",
+        notJoinedAlert: "You haven't joined yet! 😅"
     },
     fa: {
         langTxt: "EN", landingTitle: "بامبو میم 🎋", landingDesc: "خلاقیتت رو رها کن!",
@@ -66,7 +74,15 @@ var translations = {
         processing: "⏳ در حال پردازش...",
         purchaseSuccess: "پرداخت موفقیت‌آمیز بود! کیف پول شما شارژ شد. ✅",
         storeTermsTitle: "قوانین و مقررات ⚠️",
-        storeTermsDesc: "خریدهای شما با مسئولیت خودتون هستش و بخاطر شرایط و محدودیت‌های تلگرام درخواست برگشت وجه مقدور نمی‌باشد. لطفاً در خرید خود دقت کنید."
+        storeTermsDesc: "خریدهای شما با مسئولیت خودتون هستش و بخاطر شرایط و محدودیت‌های تلگرام درخواست برگشت وجه مقدور نمی‌باشد. لطفاً در خرید خود دقت کنید.",
+        
+        // ترجمه‌های جدید جوین اجباری
+        joinTitle: "عضویت اجباری 🚨",
+        joinDesc: "برای استفاده از ربات لطفا ابتدا در کانال ما عضو شوید.",
+        joinBtn: "📢 عضویت در کانال",
+        checkJoinBtn: "🔄 عضو شدم (بررسی)",
+        closeJoinBtn: "❌ بستن",
+        notJoinedAlert: "هنوز عضو نشدید رئیس! 😅"
     }
 };
 
@@ -90,6 +106,12 @@ document.addEventListener('DOMContentLoaded', function() {
     var step2 = document.getElementById('step-2');
     var templateGallery = document.getElementById('template-gallery');
     
+    // المان‌های جدید برای جوین اجباری
+    var forceJoinModal = document.getElementById('force-join-modal');
+    var joinChannelBtn = document.getElementById('join-channel-btn');
+    var checkJoinBtn = document.getElementById('check-join-btn');
+    var closeJoinBtn = document.getElementById('close-join-btn');
+
     var supportModal = document.getElementById('support-modal');
     var tabSupportBtn = document.getElementById('tab-support-btn');
     var tabCollabBtn = document.getElementById('tab-collab-btn');
@@ -122,33 +144,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (landingPage) landingPage.style.display = 'block';
         }
     }, 2500);
-
-    var startAppBtn = document.getElementById('start-app-btn');
-    if (startAppBtn) {
-        startAppBtn.onclick = function() {
-            if (landingPage) landingPage.style.display = 'none';
-            if (appContainer) appContainer.style.display = 'block';
-        };
-    }
-
-    var backToMenuBtn = document.getElementById('back-to-menu-btn');
-    if (backToMenuBtn) {
-        backToMenuBtn.onclick = function() {
-            if (appContainer) appContainer.style.display = 'none';
-            if (landingPage) landingPage.style.display = 'block';
-        };
-    }
-
-    var channelBtn = document.getElementById('channel-btn');
-    if (channelBtn) channelBtn.onclick = function() { window.open('https://t.me/bamboo_network', '_blank'); };
-
-    var langBtn = document.getElementById('lang-btn');
-    if (langBtn) {
-        langBtn.onclick = function() {
-            currentLang = currentLang === 'fa' ? 'en' : 'fa';
-            updateLanguage(currentLang);
-        };
-    }
 
     function safeSetText(id, text) { var el = document.getElementById(id); if (el) el.innerText = text; }
     function safeSetPlaceholder(id, text) { var el = document.getElementById(id); if (el) el.placeholder = text; }
@@ -196,7 +191,115 @@ document.addEventListener('DOMContentLoaded', function() {
         safeSetText('back-from-store-btn', "⬅️ " + t.backBtn);
         safeSetText('store-terms-title', t.storeTermsTitle);
         safeSetText('store-terms-desc', t.storeTermsDesc);
+
+        // آپدیت متن‌های جوین اجباری
+        safeSetText('join-title', t.joinTitle);
+        safeSetText('join-desc', t.joinDesc);
+        safeSetText('join-channel-btn', t.joinBtn);
+        safeSetText('check-join-btn', t.checkJoinBtn);
+        safeSetText('close-join-btn', t.closeJoinBtn);
     }
+
+    var langBtn = document.getElementById('lang-btn');
+    if (langBtn) {
+        langBtn.onclick = function() {
+            currentLang = currentLang === 'fa' ? 'en' : 'fa';
+            updateLanguage(currentLang);
+        };
+    }
+
+    // =====================================
+    // منطق بررسی عضویت (جوین اجباری)
+    // =====================================
+    function checkMembership(callback) {
+        var userId = null;
+        try {
+            if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                userId = tg.initDataUnsafe.user.id;
+            }
+        } catch(e) {}
+
+        // اگر کاربر از مرورگر وب (خارج از تلگرام) اومد، برای تست ردش می‌کنیم بره
+        if (!userId) {
+            callback(true);
+            return;
+        }
+
+        fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/getChatMember?chat_id=@bamboo_network&user_id=" + userId)
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (data.ok) {
+                var status = data.result.status;
+                if (status === 'member' || status === 'administrator' || status === 'creator') {
+                    callback(true);
+                } else {
+                    callback(false);
+                }
+            } else {
+                // اگر ربات ادمین کانال نباشه ارور میده، اینجا می‌ذاریم موقتاً رد بشه تا برنامه قفل نشه
+                console.log("Bot is not admin in channel or error occurred.");
+                callback(false);
+            }
+        }).catch(function() { callback(false); });
+    }
+
+    var startAppBtn = document.getElementById('start-app-btn');
+    if (startAppBtn) {
+        startAppBtn.onclick = function() {
+            var origTxt = startAppBtn.innerText;
+            startAppBtn.innerText = "⏳...";
+            checkMembership(function(isMember) {
+                startAppBtn.innerText = origTxt;
+                if (isMember) {
+                    if (landingPage) landingPage.style.display = 'none';
+                    if (appContainer) appContainer.style.display = 'block';
+                } else {
+                    if (forceJoinModal) forceJoinModal.style.display = 'block';
+                }
+            });
+        };
+    }
+
+    if (joinChannelBtn) {
+        joinChannelBtn.onclick = function() { window.open('https://t.me/bamboo_network', '_blank'); };
+    }
+
+    if (closeJoinBtn) {
+        closeJoinBtn.onclick = function() { if (forceJoinModal) forceJoinModal.style.display = 'none'; };
+    }
+
+    if (checkJoinBtn) {
+        checkJoinBtn.onclick = function() {
+            var t = translations[currentLang];
+            var origTxt = checkJoinBtn.innerText;
+            checkJoinBtn.innerText = "⏳...";
+            checkMembership(function(isMember) {
+                checkJoinBtn.innerText = origTxt;
+                if (isMember) {
+                    if (forceJoinModal) forceJoinModal.style.display = 'none';
+                    if (landingPage) landingPage.style.display = 'none';
+                    if (appContainer) appContainer.style.display = 'block';
+                } else {
+                    alert(t.notJoinedAlert);
+                }
+            });
+        };
+    }
+
+    // =====================================
+    // بقیه دکمه‌های ناوبری (مخفی کردن کیف پول تو صفحه ادیت)
+    // =====================================
+    var backToMenuBtn = document.getElementById('back-to-menu-btn');
+    if (backToMenuBtn) {
+        backToMenuBtn.onclick = function() {
+            if (appContainer) appContainer.style.display = 'none';
+            if (landingPage) landingPage.style.display = 'block';
+            if (walletBtn) walletBtn.style.display = 'flex'; // نشون دادن کیف پول در منو
+        };
+    }
+
+    var channelBtn = document.getElementById('channel-btn');
+    if (channelBtn) channelBtn.onclick = function() { window.open('https://t.me/bamboo_network', '_blank'); };
 
     if (walletBtn) {
         walletBtn.onclick = function() {
@@ -210,6 +313,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (appContainer) appContainer.style.display = 'none';
             if (storePage) storePage.style.display = 'block';
             if (storeBalanceText) storeBalanceText.innerText = userStars;
+            if (walletBtn) walletBtn.style.display = 'none'; // مخفی کردن کیف پول تو صفحه فروشگاه
         };
     }
 
@@ -221,10 +325,10 @@ document.addEventListener('DOMContentLoaded', function() {
             } else if (landingPage) {
                 landingPage.style.display = 'block';
             }
+            if (walletBtn) walletBtn.style.display = 'flex'; // برگردوندن کیف پول
         };
     }
 
-    // حلقه کلاسیک برای پشتیبانی از تمام مرورگرها
     for (var i = 0; i < buyButtons.length; i++) {
         buyButtons[i].onclick = function() {
             var amount = parseInt(this.getAttribute('data-amount'));
@@ -249,6 +353,9 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
+    // =====================================
+    // منطق پشتیبانی و همکاری
+    // =====================================
     var supportBtnMenu = document.getElementById('support-btn');
     if (supportBtnMenu) {
         supportBtnMenu.onclick = function() { if(supportModal) supportModal.style.display = 'block'; };
@@ -417,11 +524,19 @@ document.addEventListener('DOMContentLoaded', function() {
     if (nextBtn) nextBtn.onclick = goToStep2;
 
     var backBtn = document.getElementById('back-btn');
-    if (backBtn) backBtn.onclick = function() { if(step2) step2.style.display = 'none'; if(step1) step1.style.display = 'block'; };
+    if (backBtn) backBtn.onclick = function() { 
+        if(step2) step2.style.display = 'none'; 
+        if(step1) step1.style.display = 'block'; 
+        if(walletBtn) walletBtn.style.display = 'flex'; // نشون دادن کیف پول موقع برگشت
+    };
 
+    // =====================================
+    // منطق بوم و واترمارک @creat_meme_bot
+    // =====================================
     function goToStep2() {
         if(step1) step1.style.display = 'none'; 
         if(step2) step2.style.display = 'block';
+        if(walletBtn) walletBtn.style.display = 'none'; // مخفی کردن کیف پول در زمان ویرایش
         initFabricCanvas(selectedImageSrc);
     }
 
