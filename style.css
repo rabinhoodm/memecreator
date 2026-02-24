@@ -69,18 +69,21 @@ html[dir="ltr"] .control-group { text-align: left; }
 .color-picker-wrapper input[type="color"] { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
 .color-icon { width: 100%; height: 100%; border-radius: 50%; }
 
-/* === پس‌زمینه اجسام سه‌بعدی سبز و شیشه‌ای === */
-.bg-3d-container { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0; overflow: hidden; pointer-events: none; perspective: 1000px; }
-.shape-glass { position: absolute; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 2px solid rgba(74, 222, 128, 0.4); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), inset 0 0 20px rgba(74, 222, 128, 0.3); }
+/* === پس‌زمینه بسیار سبکِ اجسام و متن === */
+.bg-3d-container { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0; overflow: hidden; pointer-events: none; }
 
-/* گوی */
-.sphere-glass { width: 140px; height: 140px; top: 15%; left: 10%; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(134, 239, 172, 0.6), rgba(22, 101, 52, 0.4)); animation: floatObj 15s infinite alternate ease-in-out; }
+/* متن غول‌پیکر BAMBOO */
+.bamboo-bg-text { position: absolute; top: 50%; left: 50%; font-family: 'Poppins', sans-serif; font-weight: 900; font-size: 25vw; color: rgba(74, 222, 128, 0.15); transform: translate(-50%, -50%) rotate(-10deg); white-space: nowrap; animation: pulseText 12s infinite alternate ease-in-out; }
 
-/* مکعب */
-.cube-glass { width: 110px; height: 110px; bottom: 20%; right: 10%; border-radius: 15px; background: linear-gradient(135deg, rgba(74, 222, 128, 0.6), rgba(20, 83, 45, 0.4)); animation: spinObj 20s infinite linear; }
+/* اجسام سه‌بعدی سبک (بدون افت فریم) */
+.shape-3d { position: absolute; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(74, 222, 128, 0.5), rgba(20, 83, 45, 0.1)); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
 
-/* ستاره */
-.star-glass { width: 130px; height: 130px; top: 40%; left: 70%; background: linear-gradient(135deg, rgba(134, 239, 172, 0.6), rgba(22, 101, 52, 0.4)); clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); filter: drop-shadow(0 0 15px rgba(74, 222, 128, 0.4)); border: none; animation: spinFloatObj 18s infinite alternate ease-in-out; }
+.blob-1 { width: 150px; height: 150px; top: 10%; left: 10%; animation: floatLight 15s infinite alternate ease-in-out; }
+.blob-2 { width: 200px; height: 200px; bottom: 10%; right: 5%; border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; animation: morphLight 18s infinite alternate-reverse ease-in-out; }
+.blob-3 { width: 100px; height: 100px; top: 40%; left: 80%; background: radial-gradient(circle at 30% 30%, rgba(250, 204, 21, 0.4), rgba(34, 197, 94, 0.1)); animation: floatLight 12s infinite alternate ease-in-out; }
+.blob-4 { width: 120px; height: 120px; top: 70%; left: 15%; border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; animation: morphLight 20s infinite alternate ease-in-out; }
+.blob-5 { width: 80px; height: 80px; top: 5%; right: 30%; animation: floatLight 10s infinite alternate-reverse ease-in-out; }
 
-@keyframes floatObj { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-40px) scale(1.1); } }@keyframes spinObj { 0% { transform: translateY(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); } 50% { transform: translateY(-30px) rotateX(180deg) rotateY(90deg) rotateZ(180deg); } 100% { transform: translateY(0) rotateX(360deg) rotateY(180deg) rotateZ(360deg); } }
-@keyframes spinFloatObj { 0% { transform: translateY(0) rotate(0deg) scale(0.9); } 100% { transform: translateY(30px) rotate(180deg) scale(1.1); } }
+@keyframes pulseText { 0% { transform: translate(-50%, -50%) rotate(-10deg) scale(0.95); } 100% { transform: translate(-50%, -50%) rotate(-5deg) scale(1.05); } }
+@keyframes floatLight { 0% { transform: translateY(0); } 100% { transform: translateY(-30px); } }
+@keyframes morphLight { 0% { transform: translateY(0) rotate(0deg); border-radius: 50%; } 100% { transform: translateY(20px) rotate(180deg); border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; } }
