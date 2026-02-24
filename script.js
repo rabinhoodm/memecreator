@@ -14,24 +14,26 @@ const translations = {
         langTxt: "FA", landingTitle: "Bamboo Meme 🎋", landingDesc: "Unleash your creativity!",
         startBtn: "🎨 Start Meme Maker", supportBtnTxt: "💬 Support & Collab", channelBtn: "📢 Channel",
         title: "Meme Maker 🎨", uploadBtn: "📸 Upload from Gallery", loading: "⏳ Loading...",
-        searchPlc: "🔍 Search memes...", loadMoreBtn: "⬇️ Load More", nextBtn: "Next Step ➡️",
-        backBtn: "⬅️ Back", downloadBtn: "⬇️ Send to Bot", shareBtn: "🚀 Share",
+        searchPlc: "🔍 Search memes...", loadMoreBtn: "Load More", nextBtn: "Next Step",
+        backBtn: "Back", downloadBtn: "Send to Bot 📥", shareBtn: "Share 🚀",
+        backToMenuBtn: "🏠 Main Menu",
         addTextLbl: "Add Text", dir: "ltr", panelTitle: "Edit Text ✍️", fontLbl: "Font:", sizeLbl: "Size:",
         colorLbl: "Text Color", strokeLbl: "Stroke", placeholder: "Type your text here...",
         supportTitle: "Contact Admin 💎", supportDesc: "Write your request for support or collaboration.",
-        supportPlc: "Your message...", supportSend: "🚀 Send", supportClose: "❌ Close",
+        supportPlc: "Your message...", supportSend: "Send 🚀", supportClose: "Close ❌",
         alertEmpty: "Please write a message first! 😅", alertSuccess: "Message sent successfully! ✅", alertError: "Oops! Something went wrong."
     },
     fa: {
         langTxt: "EN", landingTitle: "بامبو میم 🎋", landingDesc: "خلاقیتت رو رها کن!",
         startBtn: "🎨 ورود به میم‌ساز", supportBtnTxt: "پشتیبانی و همکاری", channelBtn: "📢 کانال ما",
         title: "میم‌ساز حرفه‌ای 🎨", uploadBtn: "📸 آپلود از گالری", loading: "⏳ دریافت تصاویر...",
-        searchPlc: "🔍 جستجوی میم...", loadMoreBtn: "⬇️ نمایش بیشتر", nextBtn: "مرحله بعد ⬅️",
-        backBtn: "➡️ بازگشت", downloadBtn: "⬇️ ارسال به بات", shareBtn: "🚀 اشتراک‌گذاری",
+        searchPlc: "🔍 جستجوی میم...", loadMoreBtn: "نمایش بیشتر", nextBtn: "مرحله بعد",
+        backBtn: "بازگشت", downloadBtn: "ارسال به بات 📥", shareBtn: "اشتراک‌گذاری 🚀",
+        backToMenuBtn: "🏠 منوی اصلی",
         addTextLbl: "افزودن متن", dir: "rtl", panelTitle: "ویرایش متن ✍️", fontLbl: "فونت:", sizeLbl: "اندازه:",
         colorLbl: "رنگ متن", strokeLbl: "حاشیه", placeholder: "متن خود را اینجا بنویسید...",
         supportTitle: "ارتباط با مدیریت 💎", supportDesc: "درخواست همکاری، اسپانسری یا مشکل خود را بنویسید.",
-        supportPlc: "پیام شما...", supportSend: "🚀 ارسال", supportClose: "❌ بستن",
+        supportPlc: "پیام شما...", supportSend: "ارسال 🚀", supportClose: "بستن ❌",
         alertEmpty: "رئیس، لطفا اول پیامت رو بنویس! 😅", alertSuccess: "پیام شما با موفقیت ارسال شد! ✅", alertError: "اوه! مشکلی پیش آمد."
     }
 };
@@ -60,34 +62,51 @@ document.addEventListener('DOMContentLoaded', () => {
     const textInputField = document.getElementById('text-input-field');
     const inlineCloseBtn = document.getElementById('inline-close-btn');
 
-    // المان‌های پشتیبانی و همکاری
     const supportBtn = document.getElementById('support-btn');
     const supportModal = document.getElementById('support-modal');
     const closeSupportBtn = document.getElementById('close-support-btn');
     const sendSupportBtn = document.getElementById('send-support-btn');
     const supportText = document.getElementById('support-text');
+    const backToMenuBtn = document.getElementById('back-to-menu-btn');
 
     fetchTrendingMemes();
 
-    // این بخش رو کاملا ایمن کردم که روی دسکتاپ گیر نکنه
+    // سیستم ضدگلوله برای عبور از لودینگ
     setTimeout(() => {
-        if (splashScreen && landingPage) {
-            splashScreen.style.display = 'none';
-            landingPage.style.display = 'block';updateLanguage(currentLang);
+        try {
+            if (splashScreen) splashScreen.style.display = 'none';
+            if (landingPage) landingPage.style.display = 'block';
+            updateLanguage(currentLang);
+        } catch (error) {
+            console.error("Error bypassing loader:", error);
+            if (splashScreen) splashScreen.style.display = 'none';
+            if (landingPage) landingPage.style.display = 'block';
         }
     }, 2500);
 
-    document.getElementById('start-app-btn')?.addEventListener('click', () => {
-        landingPage.style.display = 'none';
-        appContainer.style.display = 'block';
-    });
+    if (document.getElementById('start-app-btn')) {
+        document.getElementById('start-app-btn').addEventListener('click', () => {
+            if (landingPage) landingPage.style.display = 'none';
+            if (appContainer) appContainer.style.display = 'block';
+        });
+    }
 
-    document.getElementById('channel-btn')?.addEventListener('click', () => window.open('https://t.me/bamboo_network', '_blank'));
+    // دکمه جدید برای برگشت به منوی اصلی
+    if (backToMenuBtn) {
+        backToMenuBtn.addEventListener('click', () => {
+            if (appContainer) appContainer.style.display = 'none';
+            if (landingPage) landingPage.style.display = 'block';
+        });
+    }
 
-    document.getElementById('lang-btn')?.addEventListener('click', () => {
-        currentLang = currentLang === 'fa' ? 'en' : 'fa';
-        updateLanguage(currentLang);
-    });
+    if (document.getElementById('channel-btn')) document.getElementById('channel-btn').addEventListener('click', () => window.open('https://t.me/bamboo_network', '_blank'));
+
+    if (document.getElementById('lang-btn')) {
+        document.getElementById('lang-btn').addEventListener('click', () => {
+            currentLang = currentLang === 'fa' ? 'en' : 'fa';
+            updateLanguage(currentLang);
+        });
+    }
 
     function updateLanguage(lang) {
         const t = translations[lang];
@@ -110,6 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         safeSetText('back-btn', t.backBtn);
         safeSetText('download-btn', t.downloadBtn);
         safeSetText('share-btn', t.shareBtn);
+        safeSetText('back-to-menu-btn', t.backToMenuBtn);
         safeSetText('add-text-label', t.addTextLbl);
         safeSetText('panel-title', t.panelTitle);
         safeSetText('font-label', t.fontLbl);
@@ -150,8 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const finalMessage = 🌟 <b>پشتیبانی و همکاری (بامبو میم)</b>\n\n💬 پیام:\n${message};
 
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: finalMessage, parse_mode: "HTML" })
             })
@@ -189,11 +208,11 @@ document.addEventListener('DOMContentLoaded', () => {
             img.onclick = () => {
                 document.querySelectorAll('.template-img').forEach(i => i.classList.remove('selected'));
                 img.classList.add('selected'); selectedImageSrc = img.src;
-                document.getElementById('next-btn').disabled = false;
+                if (document.getElementById('next-btn')) document.getElementById('next-btn').disabled = false;
             };
             templateGallery.appendChild(img);
         });
-        document.getElementById('load-more-btn')?.classList.toggle('hidden', (currentPage * memesPerPage) >= filteredMemes.length);
+        if (document.getElementById('load-more-btn')) document.getElementById('load-more-btn').classList.toggle('hidden', (currentPage * memesPerPage) >= filteredMemes.length);
     }
 
     if (document.getElementById('search-input')) {
@@ -218,10 +237,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (document.getElementById('next-btn')) document.getElementById('next-btn').onclick = goToStep2;
-    if (document.getElementById('back-btn')) document.getElementById('back-btn').onclick = () => { step2.style.display = 'none'; step1.style.display = 'block'; };
+    if (document.getElementById('back-btn')) document.getElementById('back-btn').onclick = () => { 
+        if(step2) step2.style.display = 'none'; 
+        if(step1) step1.style.display = 'block'; 
+    };
 
     function goToStep2() {
-        step1.style.display = 'none'; step2.style.display = 'block';
+        if(step1) step1.style.display = 'none'; 
+        if(step2) step2.style.display = 'block';
         initFabricCanvas(selectedImageSrc);
     }
 
@@ -233,8 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fabric.Image.fromURL(imgSrc, (img) => {
             const scale = containerWidth / img.width;
             fCanvas.setWidth(containerWidth); fCanvas.setHeight(img.height * scale);
-            fCanvas.setBackgroundImage(img, fCanvas.renderAll.bind(fCanvas), {
-                scaleX: scale, scaleY: scale, originX: 'left', originY: 'top', crossOrigin: 'anonymous'
+            fCanvas.setBackgroundImage(img, fCanvas.renderAll.bind(fCanvas), {scaleX: scale, scaleY: scale, originX: 'left', originY: 'top', crossOrigin: 'anonymous'
             });
         }, { crossOrigin: 'anonymous' });
 
@@ -260,16 +282,17 @@ document.addEventListener('DOMContentLoaded', () => {
     function openEditPanel() {
         const activeObj = fCanvas.getActiveObject();
         if (activeObj && activeObj.type === 'text') {
-            textEditPanel.style.transform = 'translateY(0)';
+            if (textEditPanel) textEditPanel.style.transform = 'translateY(0)';
             
-            textInputField.value = activeObj.text || '';document.getElementById('font-family').value = activeObj.fontFamily || 'Lalezar';
-            document.getElementById('font-size').value = activeObj.fontSize || 40;
-            document.getElementById('text-color').value = activeObj.fill || '#ffffff';
-            document.getElementById('color-indicator').style.backgroundColor = activeObj.fill || '#ffffff';
-            document.getElementById('stroke-color').value = activeObj.stroke || '#000000';
-            document.getElementById('stroke-indicator').style.backgroundColor = activeObj.stroke || '#000000';
+            if (textInputField) textInputField.value = activeObj.text || '';
+            if (document.getElementById('font-family')) document.getElementById('font-family').value = activeObj.fontFamily || 'Lalezar';
+            if (document.getElementById('font-size')) document.getElementById('font-size').value = activeObj.fontSize || 40;
+            if (document.getElementById('text-color')) document.getElementById('text-color').value = activeObj.fill || '#ffffff';
+            if (document.getElementById('color-indicator')) document.getElementById('color-indicator').style.backgroundColor = activeObj.fill || '#ffffff';
+            if (document.getElementById('stroke-color')) document.getElementById('stroke-color').value = activeObj.stroke || '#000000';
+            if (document.getElementById('stroke-indicator')) document.getElementById('stroke-indicator').style.backgroundColor = activeObj.stroke || '#000000';
             
-            setTimeout(() => textInputField.focus(), 300);
+            setTimeout(() => { if(textInputField) textInputField.focus(); }, 300);
         }
     }
 
@@ -287,8 +310,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             fCanvas.add(text).setActiveObject(text);
             
-            addTextBtn.style.display = 'none';
-            editTools.style.display = 'flex';
+            if(addTextBtn) addTextBtn.style.display = 'none';
+            if(editTools) editTools.style.display = 'flex';
             openEditPanel();
         };
     }
@@ -302,8 +325,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if(document.getElementById('font-family')) document.getElementById('font-family').onchange = (e) => { const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('fontFamily', e.target.value); fCanvas.renderAll(); } };
     if(document.getElementById('font-size')) document.getElementById('font-size').oninput = (e) => { const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('fontSize', parseInt(e.target.value)); fCanvas.renderAll(); } };
-    if(document.getElementById('text-color')) document.getElementById('text-color').oninput = (e) => { document.getElementById('color-indicator').style.backgroundColor = e.target.value; const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('fill', e.target.value); fCanvas.renderAll(); } };
-    if(document.getElementById('stroke-color')) document.getElementById('stroke-color').oninput = (e) => { document.getElementById('stroke-indicator').style.backgroundColor = e.target.value; const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('stroke', e.target.value); fCanvas.renderAll(); } };
+    if(document.getElementById('text-color')) document.getElementById('text-color').oninput = (e) => { if(document.getElementById('color-indicator')) document.getElementById('color-indicator').style.backgroundColor = e.target.value; const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('fill', e.target.value); fCanvas.renderAll(); } };
+    if(document.getElementById('stroke-color')) document.getElementById('stroke-color').oninput = (e) => { if(document.getElementById('stroke-indicator')) document.getElementById('stroke-indicator').style.backgroundColor = e.target.value; const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('stroke', e.target.value); fCanvas.renderAll(); } };
 
     function closeEditPanel() {
         if(textEditPanel) textEditPanel.style.transform = 'translateY(120%)';

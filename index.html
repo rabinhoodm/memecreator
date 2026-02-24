@@ -16,10 +16,9 @@
 <body>
 
     <div class="bg-3d-container">
-        <div class="shape-glass blob-1"></div>
-        <div class="shape-glass blob-2"></div>
+        <div class="shape-glass sphere-glass"></div>
         <div class="shape-glass cube-glass"></div>
-        <div class="shape-glass polygon-glass"></div>
+        <div class="shape-glass star-glass"></div>
     </div>
 
     <button id="lang-btn" class="glass-btn">
@@ -51,6 +50,8 @@
         <h1 id="title-text">میم‌ساز حرفه‌ای 🎨</h1>
         
         <div id="step-1">
+            <button id="back-to-menu-btn" class="secondary-btn glass-btn-sec" style="margin-bottom: 15px; border-color: #9ca3af; color: #4b5563;">🏠 منوی اصلی</button>
+            
             <input type="file" id="image-upload" accept="image/*" style="display: none;">
             
             <button id="upload-btn" class="main-btn glass-btn-green" style="margin-bottom: 15px;">
@@ -63,8 +64,8 @@
                 <p id="loading-text" style="color: #555; font-weight: bold; width: 100%;">⏳ در حال دریافت تصاویر...</p>
             </div>
             
-            <button id="load-more-btn" class="secondary-btn glass-btn-sec hidden" style="width: 100%; margin-top: 10px;">⬇️ نمایش بیشتر</button>
-            <button id="next-btn" class="main-btn glass-btn-primary" disabled style="margin-top: 15px;">مرحله بعد ➡️</button>
+            <button id="load-more-btn" class="secondary-btn glass-btn-sec hidden" style="width: 100%; margin-top: 10px;">نمایش بیشتر</button>
+            <button id="next-btn" class="main-btn glass-btn-primary" disabled style="margin-top: 15px;">مرحله بعد</button>
         </div>
 
         <div id="step-2" style="display: none;">
@@ -79,18 +80,19 @@
                 </button>
                 
                 <div id="edit-tools" style="display: none; width: 100%; gap: 10px; justify-content: space-between;">
-                    <button id="edit-text-btn" class="tool-btn" style="background: #3b82f6; width: 50%; justify-content: center;">
-                        <span class="btn-icon">✏️ ویرایش</span>
-                    </button><button id="delete-text-btn" class="tool-btn delete" style="width: 50%; margin: 0; border-radius: 15px;">
+                    <button id="edit-text-btn" class="tool-btn" style="background: #3b82f6; width: 50%; justify-content: center;"><span class="btn-icon">✏️ ویرایش</span>
+                    </button>
+                    <button id="delete-text-btn" class="tool-btn delete" style="width: 50%; margin: 0; border-radius: 15px;">
                         <span class="btn-icon">🗑️ حذف</span>
                     </button>
                 </div>
             </div>
             
-            <div class="action-buttons"><button id="back-btn" class="secondary-btn glass-btn-sec">⬅️ بازگشت</button>
-                <button id="download-btn" class="main-btn glass-btn-primary telegram-btn">⬇️ ارسال به بات</button>
+            <div class="action-buttons">
+                <button id="back-btn" class="secondary-btn glass-btn-sec">بازگشت</button>
+                <button id="download-btn" class="main-btn glass-btn-primary telegram-btn">ارسال به بات 📥</button>
             </div>
-            <button id="share-btn" class="share-btn-full glass-btn-outline">🚀 اشتراک‌گذاری</button>
+            <button id="share-btn" class="share-btn-full glass-btn-outline">اشتراک‌گذاری 🚀</button>
         </div>
     </div>
 
@@ -99,8 +101,8 @@
         <p id="support-desc" style="font-size: 0.85rem; color: #555; margin-bottom: 15px;">درخواست همکاری، اسپانسری یا مشکل خود را بنویسید.</p>
         <textarea id="support-text" class="glass-input text-area-main" rows="4" placeholder="پیام شما..." style="resize: none;"></textarea>
         <div style="display: flex; gap: 10px;">
-            <button id="send-support-btn" class="main-btn glass-btn-primary" style="flex: 1; background: linear-gradient(135deg, #facc15, #eab308); border: none; color: #fff;">🚀 ارسال</button>
-            <button id="close-support-btn" class="secondary-btn glass-btn-sec" style="flex: 1; border-color: #ef4444; color: #ef4444;">❌ بستن</button>
+            <button id="send-support-btn" class="main-btn glass-btn-primary" style="flex: 1; background: linear-gradient(135deg, #facc15, #eab308); border: none; color: #fff;">ارسال 🚀</button>
+            <button id="close-support-btn" class="secondary-btn glass-btn-sec" style="flex: 1; border-color: #ef4444; color: #ef4444;">بستن ❌</button>
         </div>
     </div>
 
