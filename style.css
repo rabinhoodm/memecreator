@@ -26,10 +26,10 @@ h1 { color: var(--bamboo-dark); margin-bottom: 10px; font-weight: 700; }
 button { font-family: inherit; transition: all 0.3s ease; }
 button:active { transform: scale(0.97) !important; }
 
-/* تنظیمات دکمه‌های بالای صفحه - z-index بالاتر رفت تا کامل کلیک بشه */
-.glass-btn { position: absolute; padding: 8px 14px; cursor: pointer; border: 1px solid var(--glass-border); border-radius: 20px; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); font-weight: 700; z-index: 9999; box-shadow: var(--shadow-soft); display: flex; align-items: center; gap: 5px; }
-#lang-btn { top: 15px; color: var(--text-dark); }
-#wallet-btn { top: 15px; border-color: rgba(250, 204, 21, 0.6); color: #ca8a04; }
+/* تنظیمات دکمه‌های بالای صفحه - در ابتدا کاملا مخفی هستن */
+.glass-btn { position: absolute; padding: 8px 14px; cursor: pointer; border: 1px solid var(--glass-border); border-radius: 20px; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); font-weight: 700; z-index: 9999; box-shadow: var(--shadow-soft); align-items: center; gap: 5px; }
+#lang-btn { top: 15px; color: var(--text-dark); display: none; }
+#wallet-btn { top: 15px; border-color: rgba(250, 204, 21, 0.6); color: #ca8a04; display: none; }
 
 html[dir="rtl"] #lang-btn { left: 15px; right: auto; }
 html[dir="rtl"] #wallet-btn { right: 15px; left: auto; }
@@ -76,11 +76,9 @@ html[dir="ltr"] .control-group { text-align: left; }
 .color-picker-wrapper input[type="color"] { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
 .color-icon { width: 100%; height: 100%; border-radius: 50%; }
 
-/* استایل کادر قوانین فروشگاه */
 .terms-box { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: var(--radius-md); padding: 15px; text-align: right; }
 html[dir="ltr"] .terms-box { text-align: left; }
 
-/* پس‌زمینه بسیار سبکِ اجسام و متن */
 .bg-3d-container { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0; overflow: hidden; pointer-events: none; }
 .bamboo-bg-text { position: absolute; top: 50%; left: 50%; font-family: 'Poppins', sans-serif; font-weight: 900; font-size: 25vw; color: rgba(74, 222, 128, 0.15); transform: translate(-50%, -50%) rotate(-10deg); white-space: nowrap; animation: pulseText 12s infinite alternate ease-in-out; }
 .shape-3d { position: absolute; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(74, 222, 128, 0.5), rgba(20, 83, 45, 0.1)); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }

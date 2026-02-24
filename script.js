@@ -97,6 +97,13 @@ var userStars = 0;
 var previousScreen = null; 
 
 document.addEventListener('DOMContentLoaded', function() {
+    var langBtn = document.getElementById('lang-btn');
+    var walletBtn = document.getElementById('wallet-btn');
+
+    // مخفی کردن دکمه‌ها در صدمِ ثانیه‌ی اول برای اطمینان صد در صد
+    if (langBtn) langBtn.style.display = 'none';
+    if (walletBtn) walletBtn.style.display = 'none';
+
     var splashScreen = document.getElementById('splash-screen');
     var landingPage = document.getElementById('landing-page');
     var appContainer = document.getElementById('app-container');
@@ -104,8 +111,6 @@ document.addEventListener('DOMContentLoaded', function() {
     var step2 = document.getElementById('step-2');
     var templateGallery = document.getElementById('template-gallery');
     
-    var langBtn = document.getElementById('lang-btn');
-    var walletBtn = document.getElementById('wallet-btn');
     var walletBalance = document.getElementById('wallet-balance');
     var storePage = document.getElementById('store-page');
     var storeBalanceText = document.getElementById('store-balance-text');
@@ -132,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     fetchTrendingMemes();
 
-    // پایان لودینگ و نمایش دکمه‌های زبان و کیف پول
+    // پایان لودینگ و ظاهر شدن دکمه‌ها
     setTimeout(function() {
         try {
             if (splashScreen) splashScreen.style.display = 'none';
@@ -251,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (isMember) {
                     if (landingPage) landingPage.style.display = 'none';
                     if (appContainer) appContainer.style.display = 'block';
-                    if (walletBtn) walletBtn.style.display = 'none'; // مخفی کردن تو بخش میم‌ساز
+                    if (walletBtn) walletBtn.style.display = 'none'; // مخفی کردن تو کل بخش ساخت میم
                 } else {
                     if (forceJoinModal) forceJoinModal.style.display = 'block';
                 }
@@ -278,7 +283,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (forceJoinModal) forceJoinModal.style.display = 'none';
                     if (landingPage) landingPage.style.display = 'none';
                     if (appContainer) appContainer.style.display = 'block';
-                    if (walletBtn) walletBtn.style.display = 'none'; // مخفی کردن تو بخش میم‌ساز
+                    if (walletBtn) walletBtn.style.display = 'none'; // مخفی کردن
                 } else {
                     alert(t.notJoinedAlert);
                 }
@@ -291,7 +296,7 @@ document.addEventListener('DOMContentLoaded', function() {
         backToMenuBtn.onclick = function() {
             if (appContainer) appContainer.style.display = 'none';
             if (landingPage) landingPage.style.display = 'block';
-            if (walletBtn) walletBtn.style.display = 'flex'; // نشون دادن دوباره در منو
+            if (walletBtn) walletBtn.style.display = 'flex'; // ظاهر شدن مجدد در منو
         };
     }
 
@@ -313,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (appContainer) appContainer.style.display = 'none';
             if (storePage) storePage.style.display = 'block';
             if (storeBalanceText) storeBalanceText.innerText = userStars;
-            if (walletBtn) walletBtn.style.display = 'flex'; // در فروشگاه همیشه نشون بده
+            if (walletBtn) walletBtn.style.display = 'flex';
         };
     }
 
@@ -325,7 +330,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (walletBtn) walletBtn.style.display = 'flex';
             } else if (previousScreen === appContainer) {
                 if (appContainer) appContainer.style.display = 'block';
-                if (walletBtn) walletBtn.style.display = 'none'; // چون داره میره تو میم‌ساز، مخفی میشه
+                if (walletBtn) walletBtn.style.display = 'none';
             } else {
                 if (landingPage) landingPage.style.display = 'block';
                 if (walletBtn) walletBtn.style.display = 'flex';
@@ -536,6 +541,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function goToStep2() {
         if(step1) step1.style.display = 'none'; 
         if(step2) step2.style.display = 'block';
+        if(walletBtn) walletBtn.style.display = 'none'; // مخفی ماندن در زمان ویرایش
         initFabricCanvas(selectedImageSrc);
     }
 
