@@ -18,7 +18,8 @@
     <div class="bg-3d-container">
         <div class="shape-glass blob-1"></div>
         <div class="shape-glass blob-2"></div>
-        <div class="shape-glass blob-3"></div>
+        <div class="shape-glass cube-glass"></div>
+        <div class="shape-glass polygon-glass"></div>
     </div>
 
     <button id="lang-btn" class="glass-btn">
@@ -41,9 +42,8 @@
         
         <div class="menu-buttons">
             <button id="start-app-btn" class="main-btn glass-btn-primary">🎨 ورود به میم‌ساز</button>
-            <button id="support-btn" class="secondary-btn glass-btn-sec">💬 همکاری و پشتیبانی</button>
+            <button id="support-btn" class="secondary-btn glass-btn-sec" style="border-color: #d97706; color: #d97706;">💬 <span id="support-btn-txt">پشتیبانی و همکاری</span></button>
             <button id="channel-btn" class="secondary-btn glass-btn-sec">📢 کانال ما</button>
-            <button id="sponsor-btn" class="secondary-btn glass-btn-sec" style="border-color: #d97706; color: #d97706;">🤝 <span id="sponsor-btn-txt">درخواست اسپانسری</span></button>
         </div>
     </div>
 
@@ -94,13 +94,13 @@
         </div>
     </div>
 
-    <div id="sponsor-modal" class="glass-panel screen-layer" style="display: none; position: fixed; z-index: 999; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 400px; opacity: 1;">
-        <h3 id="sponsor-title" style="color: #d97706; margin-top: 0; margin-bottom: 10px;">درخواست اسپانسری 💎</h3>
-        <p id="sponsor-desc" style="font-size: 0.85rem; color: #555; margin-bottom: 15px;">مشخصات خود را بنویسید تا مستقیماً به مدیریت ارسال شود.</p>
-        <textarea id="sponsor-text" class="glass-input text-area-main" rows="4" placeholder="سلام، من درخواست..." style="resize: none;"></textarea>
+    <div id="support-modal" class="glass-panel" style="display: none; position: fixed; z-index: 9999; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 400px;">
+        <h3 id="support-title" style="color: #d97706; margin-top: 0; margin-bottom: 10px;">ارتباط با مدیریت 💎</h3>
+        <p id="support-desc" style="font-size: 0.85rem; color: #555; margin-bottom: 15px;">درخواست همکاری، اسپانسری یا مشکل خود را بنویسید.</p>
+        <textarea id="support-text" class="glass-input text-area-main" rows="4" placeholder="پیام شما..." style="resize: none;"></textarea>
         <div style="display: flex; gap: 10px;">
-            <button id="send-sponsor-btn" class="main-btn glass-btn-primary" style="flex: 1; background: linear-gradient(135deg, #facc15, #eab308); border: none; color: #fff;">🚀 ارسال</button>
-            <button id="close-sponsor-btn" class="secondary-btn glass-btn-sec" style="flex: 1; border-color: #ef4444; color: #ef4444;">❌ بستن</button>
+            <button id="send-support-btn" class="main-btn glass-btn-primary" style="flex: 1; background: linear-gradient(135deg, #facc15, #eab308); border: none; color: #fff;">🚀 ارسال</button>
+            <button id="close-support-btn" class="secondary-btn glass-btn-sec" style="flex: 1; border-color: #ef4444; color: #ef4444;">❌ بستن</button>
         </div>
     </div>
 
