@@ -1,17 +1,15 @@
-const BOT_TOKEN = "8680179449:AAHb26-jsgM-Q92zEAeBxzM0ycHbpoJkAvk"; 
-const ADMIN_CHAT_ID = "6156596236";
+var BOT_TOKEN = "8680179449:AAHb26-jsgM-Q92zEAeBxzM0ycHbpoJkAvk"; 
+var ADMIN_CHAT_ID = "6156596236";
 
-let tg = null;
+var tg = null;
 try {
     if (window.Telegram && window.Telegram.WebApp) {
         tg = window.Telegram.WebApp;
         tg.expand();
     }
-} catch (e) {
-    console.log("Telegram WebApp Error");
-}
+} catch (e) {}
 
-const translations = {
+var translations = {
     en: {
         langTxt: "FA", landingTitle: "Bamboo Meme 🎋", landingDesc: "Unleash your creativity!",
         startBtn: "🎨 Start Meme Maker", supportBtnTxt: "💬 Support & Collab", channelBtn: "📢 Channel",
@@ -33,7 +31,6 @@ const translations = {
         alertError: "Oops! Something went wrong.",
         newTextDef: "New Text",
         
-        // ترجمه‌های بخش فروشگاه
         storeTitle: "Stars Store ⭐",
         storeDescText: "Current Balance:",
         confirmPurchase: "Do you want to purchase {amount} Stars?",
@@ -63,7 +60,6 @@ const translations = {
         alertError: "اوه! مشکلی پیش آمد.",
         newTextDef: "متن جدید",
         
-        // ترجمه‌های بخش فروشگاه
         storeTitle: "فروشگاه استارز ⭐",
         storeDescText: "موجودی فعلی شما:",
         confirmPurchase: "آیا از خرید {amount} استارز مطمئن هستید؟",
@@ -74,47 +70,45 @@ const translations = {
     }
 };
 
-let currentLang = 'fa';
-let fCanvas = null;
-let selectedImageSrc = null;
-let allMemes = [];
-let filteredMemes = [];
-let currentPage = 1;
-const memesPerPage = 20;
+var currentLang = 'fa';
+var fCanvas = null;
+var selectedImageSrc = null;
+var allMemes = [];
+var filteredMemes = [];
+var currentPage = 1;
+var memesPerPage = 20;
 
-let activeTab = 'support';
-let userStars = 0; // موجودی کیف پول
-let previousScreen = null; // برای دکمه بازگشتِ فروشگاه
+var activeTab = 'support';
+var userStars = 0; 
+var previousScreen = null; 
 
 document.addEventListener('DOMContentLoaded', function() {
-    const splashScreen = document.getElementById('splash-screen');
-    const landingPage = document.getElementById('landing-page');
-    const appContainer = document.getElementById('app-container');
-    const step1 = document.getElementById('step-1');
-    const step2 = document.getElementById('step-2');
-    const templateGallery = document.getElementById('template-gallery');
+    var splashScreen = document.getElementById('splash-screen');
+    var landingPage = document.getElementById('landing-page');
+    var appContainer = document.getElementById('app-container');
+    var step1 = document.getElementById('step-1');
+    var step2 = document.getElementById('step-2');
+    var templateGallery = document.getElementById('template-gallery');
     
-    // المان‌های پشتیبانی
-    const supportModal = document.getElementById('support-modal');
-    const tabSupportBtn = document.getElementById('tab-support-btn');
-    const tabCollabBtn = document.getElementById('tab-collab-btn');
-    const formSupportView = document.getElementById('form-support-view');
-    const formCollabView = document.getElementById('form-collab-view');
-    const supportText = document.getElementById('support-text');
-    const supportFileUpload = document.getElementById('support-file-upload');
-    const supportImgBtn = document.getElementById('support-img-btn');
-    const supportFileName = document.getElementById('support-file-name');
-    const collabChannel = document.getElementById('collab-channel');
-    const collabTelegram = document.getElementById('collab-telegram');
-    const collabExtra = document.getElementById('collab-extra');
+    var supportModal = document.getElementById('support-modal');
+    var tabSupportBtn = document.getElementById('tab-support-btn');
+    var tabCollabBtn = document.getElementById('tab-collab-btn');
+    var formSupportView = document.getElementById('form-support-view');
+    var formCollabView = document.getElementById('form-collab-view');
+    var supportText = document.getElementById('support-text');
+    var supportFileUpload = document.getElementById('support-file-upload');
+    var supportImgBtn = document.getElementById('support-img-btn');
+    var supportFileName = document.getElementById('support-file-name');
+    var collabChannel = document.getElementById('collab-channel');
+    var collabTelegram = document.getElementById('collab-telegram');
+    var collabExtra = document.getElementById('collab-extra');
 
-    // المان‌های صفحه فروشگاه
-    const walletBtn = document.getElementById('wallet-btn');
-    const walletBalance = document.getElementById('wallet-balance');
-    const storePage = document.getElementById('store-page');
-    const storeBalanceText = document.getElementById('store-balance-text');
-    const backFromStoreBtn = document.getElementById('back-from-store-btn');
-    const buyButtons = document.querySelectorAll('.buy-stars-btn');
+    var walletBtn = document.getElementById('wallet-btn');
+    var walletBalance = document.getElementById('wallet-balance');
+    var storePage = document.getElementById('store-page');
+    var storeBalanceText = document.getElementById('store-balance-text');
+    var backFromStoreBtn = document.getElementById('back-from-store-btn');
+    var buyButtons = document.querySelectorAll('.buy-stars-btn');
 
     fetchTrendingMemes();
 
@@ -129,39 +123,39 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 2500);
 
-    const startAppBtn = document.getElementById('start-app-btn');
+    var startAppBtn = document.getElementById('start-app-btn');
     if (startAppBtn) {
-        startAppBtn.addEventListener('click', function() {
+        startAppBtn.onclick = function() {
             if (landingPage) landingPage.style.display = 'none';
             if (appContainer) appContainer.style.display = 'block';
-        });
+        };
     }
 
-    const backToMenuBtn = document.getElementById('back-to-menu-btn');
+    var backToMenuBtn = document.getElementById('back-to-menu-btn');
     if (backToMenuBtn) {
-        backToMenuBtn.addEventListener('click', function() {
+        backToMenuBtn.onclick = function() {
             if (appContainer) appContainer.style.display = 'none';
             if (landingPage) landingPage.style.display = 'block';
-        });
+        };
     }
 
-    const channelBtn = document.getElementById('channel-btn');
-    if (channelBtn) channelBtn.addEventListener('click', function() { window.open('https://t.me/bamboo_network', '_blank'); });
+    var channelBtn = document.getElementById('channel-btn');
+    if (channelBtn) channelBtn.onclick = function() { window.open('https://t.me/bamboo_network', '_blank'); };
 
-    const langBtn = document.getElementById('lang-btn');
+    var langBtn = document.getElementById('lang-btn');
     if (langBtn) {
-        langBtn.addEventListener('click', function() {
+        langBtn.onclick = function() {
             currentLang = currentLang === 'fa' ? 'en' : 'fa';
             updateLanguage(currentLang);
-        });
+        };
     }
 
-    function safeSetText(id, text) { const el = document.getElementById(id); if (el) el.innerText = text; }
-    function safeSetPlaceholder(id, text) { const el = document.getElementById(id); if (el) el.placeholder = text; }
+    function safeSetText(id, text) { var el = document.getElementById(id); if (el) el.innerText = text; }
+    function safeSetPlaceholder(id, text) { var el = document.getElementById(id); if (el) el.placeholder = text; }
 
     function updateLanguage(lang) {
-        const t = translations[lang];
-        const htmlTag = document.getElementById('html-tag');
+        var t = translations[lang];
+        var htmlTag = document.getElementById('html-tag');
         if (htmlTag) htmlTag.dir = t.dir;
 
         safeSetText('lang-text', t.langTxt);
@@ -197,7 +191,6 @@ document.addEventListener('DOMContentLoaded', function() {
         safeSetText('send-support-btn', t.supportSend);
         safeSetText('close-support-btn', t.supportClose);
         
-        // ترجمه‌های فروشگاه
         safeSetText('store-title', t.storeTitle);
         safeSetText('store-desc-text', t.storeDescText);
         safeSetText('back-from-store-btn', "⬅️ " + t.backBtn);
@@ -205,12 +198,8 @@ document.addEventListener('DOMContentLoaded', function() {
         safeSetText('store-terms-desc', t.storeTermsDesc);
     }
 
-    // =====================================
-    // منطق صفحه‌ی اختصاصی فروشگاه استارز
-    // =====================================
     if (walletBtn) {
         walletBtn.onclick = function() {
-            // ذخیره صفحه‌ای که در آن هستیم تا بعداً بتونیم برگردیم
             if (landingPage && landingPage.style.display !== 'none') {
                 previousScreen = landingPage;
             } else if (appContainer && appContainer.style.display !== 'none') {
@@ -227,52 +216,45 @@ document.addEventListener('DOMContentLoaded', function() {
     if (backFromStoreBtn) {
         backFromStoreBtn.onclick = function() {
             if (storePage) storePage.style.display = 'none';
-            
-            // بازگشت هوشمند به صفحه قبلی
             if (previousScreen) {
                 previousScreen.style.display = 'block';
             } else if (landingPage) {
-                landingPage.style.display = 'block'; // حالت پیش‌فرض
+                landingPage.style.display = 'block';
             }
         };
     }
 
-    // شبیه‌سازی خرید با کلیک روی بسته‌های استارز
-    buyButtons.forEach(function(btn) {
-        btn.onclick = function() {
-            const amount = parseInt(this.getAttribute('data-amount'));
-            const t = translations[currentLang];
+    // حلقه کلاسیک برای پشتیبانی از تمام مرورگرها
+    for (var i = 0; i < buyButtons.length; i++) {
+        buyButtons[i].onclick = function() {
+            var amount = parseInt(this.getAttribute('data-amount'));
+            var t = translations[currentLang];
             
             if (confirm(t.confirmPurchase.replace('{amount}', amount))) {
-                const originalHTML = this.innerHTML;
+                var originalHTML = this.innerHTML;
                 this.innerHTML = t.processing;
                 this.disabled = true;
+                
+                var btnElement = this;
 
-                // شبیه‌سازی درگاه پرداخت (2 ثانیه تاخیر)
                 setTimeout(function() {
                     userStars += amount; 
-                    
                     if (walletBalance) walletBalance.innerText = userStars;
                     if (storeBalanceText) storeBalanceText.innerText = userStars;
-                    
                     alert(t.purchaseSuccess);
-                    
-                    btn.innerHTML = originalHTML;
-                    btn.disabled = false;
+                    btnElement.innerHTML = originalHTML;
+                    btnElement.disabled = false;
                 }, 2000);
             }
         };
-    });
+    }
 
-    // =====================================
-    // منطق پشتیبانی و همکاری (بدون تغییر)
-    // =====================================
-    const supportBtnMenu = document.getElementById('support-btn');
+    var supportBtnMenu = document.getElementById('support-btn');
     if (supportBtnMenu) {
         supportBtnMenu.onclick = function() { if(supportModal) supportModal.style.display = 'block'; };
     }
 
-    const closeSupportBtn = document.getElementById('close-support-btn');
+    var closeSupportBtn = document.getElementById('close-support-btn');
     if (closeSupportBtn) {
         closeSupportBtn.onclick = function() { 
             if(supportModal) supportModal.style.display = 'none'; 
@@ -312,23 +294,23 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
-    const sendSupportBtn = document.getElementById('send-support-btn');
+    var sendSupportBtn = document.getElementById('send-support-btn');
     if (sendSupportBtn) {
         sendSupportBtn.onclick = function() {
-            const t = translations[currentLang];
-            const originalText = sendSupportBtn.innerText;
+            var t = translations[currentLang];
+            var originalText = sendSupportBtn.innerText;
 
-            let senderInfo = "Web Browser";
+            var senderInfo = "Web Browser";
             try {
                 if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                    const u = tg.initDataUnsafe.user;
+                    var u = tg.initDataUnsafe.user;
                     senderInfo = "ID: " + u.id + "\nName: " + (u.first_name || '') + " " + (u.last_name || '') + "\nUser: @" + (u.username || '');
                 }
             } catch(err) {}
 
             if (activeTab === 'support') {
-                const message = supportText ? supportText.value.trim() : "";
-                const file = (supportFileUpload && supportFileUpload.files.length > 0) ? supportFileUpload.files[0] : null;
+                var message = supportText ? supportText.value.trim() : "";
+                var file = (supportFileUpload && supportFileUpload.files.length > 0) ? supportFileUpload.files[0] : null;
 
                 if (!message && !file) { alert(t.alertEmpty); return; }
 
@@ -336,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 sendSupportBtn.disabled = true;
 
                 if (file) {
-                    const fd = new FormData();
+                    var fd = new FormData();
                     fd.append('chat_id', ADMIN_CHAT_ID);
                     fd.append('photo', file);
                     fd.append('caption', "🛠 Support Ticket\n\n👤 Sender:\n" + senderInfo + "\n\n📝 Message:\n" + message);
@@ -347,7 +329,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         else { alert(t.alertError); }
                     }).catch(function() { alert(t.alertError); }).finally(function() { sendSupportBtn.innerText = originalText; sendSupportBtn.disabled = false; });
                 } else {
-                    const finalMsg = "🛠 Support Ticket\n\n👤 Sender:\n" + senderInfo + "\n\n📝 Message:\n" + message;
+                    var finalMsg = "🛠 Support Ticket\n\n👤 Sender:\n" + senderInfo + "\n\n📝 Message:\n" + message;
                     fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {
                         method: 'POST', headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: finalMsg })
@@ -359,20 +341,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
             } else if (activeTab === 'collab') {
-                const ch = collabChannel ? collabChannel.value.trim() : "";
-                const tgId = collabTelegram ? collabTelegram.value.trim() : "";
-                const ex = collabExtra ? collabExtra.value.trim() : "";
+                var ch = collabChannel ? collabChannel.value.trim() : "";
+                var tgId = collabTelegram ? collabTelegram.value.trim() : "";
+                var ex = collabExtra ? collabExtra.value.trim() : "";
 
                 if (!ch && !tgId) { alert(t.alertEmpty); return; }
 
                 sendSupportBtn.innerText = "⏳...";
                 sendSupportBtn.disabled = true;
 
-                const finalMsg = "🤝 Collab Request\n\n👤 Sender:\n" + senderInfo + "\n\n📢 Channel: " + ch + "\n👤 Admin ID: " + tgId + "\n📝 Extra:\n" + ex;
+                var finalMsg2 = "🤝 Collab Request\n\n👤 Sender:\n" + senderInfo + "\n\n📢 Channel: " + ch + "\n👤 Admin ID: " + tgId + "\n📝 Extra:\n" + ex;
 
                 fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: finalMsg })
+                    body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: finalMsg2 })
                 })
                 .then(function(res) { return res.json(); }).then(function(data) {
                     if (data.ok) { alert(t.alertSuccessCollab); if(closeSupportBtn) closeSupportBtn.click(); } 
@@ -386,56 +368,57 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             fetch('https://api.imgflip.com/get_memes').then(function(res) { return res.json(); }).then(function(data) {
                 if (data.success) { allMemes = data.data.memes; filteredMemes = [].concat(allMemes); renderGallery(); }
-            }).catch(function(e) {});
+            }).catch(function() {});
         } catch(e) {}
     }
 
     function renderGallery() {
         if (!templateGallery) return;
         if (currentPage === 1) templateGallery.innerHTML = '';
-        const memesToShow = filteredMemes.slice((currentPage - 1) * memesPerPage, currentPage * memesPerPage);
+        var memesToShow = filteredMemes.slice((currentPage - 1) * memesPerPage, currentPage * memesPerPage);
         memesToShow.forEach(function(meme) {
-            const img = document.createElement('img');
+            var img = document.createElement('img');
             img.src = meme.url; img.className = 'template-img'; img.crossOrigin = "anonymous";
             img.onclick = function() {
-                document.querySelectorAll('.template-img').forEach(function(i) { i.classList.remove('selected'); });
+                var allImgs = document.querySelectorAll('.template-img');
+                for(var i=0; i<allImgs.length; i++) { allImgs[i].classList.remove('selected'); }
                 img.classList.add('selected'); selectedImageSrc = img.src;
-                const nextBtn = document.getElementById('next-btn');
+                var nextBtn = document.getElementById('next-btn');
                 if (nextBtn) nextBtn.disabled = false;
             };
             templateGallery.appendChild(img);
         });
-        const loadMoreBtn = document.getElementById('load-more-btn');
+        var loadMoreBtn = document.getElementById('load-more-btn');
         if (loadMoreBtn) loadMoreBtn.classList.toggle('hidden', (currentPage * memesPerPage) >= filteredMemes.length);
     }
 
-    const searchInput = document.getElementById('search-input');
-    if (searchInput) searchInput.oninput = function(e) { filteredMemes = allMemes.filter(function(m) { return m.name.toLowerCase().includes(e.target.value.toLowerCase()); }); currentPage = 1; renderGallery(); };
+    var searchInput = document.getElementById('search-input');
+    if (searchInput) searchInput.oninput = function(e) { 
+        filteredMemes = allMemes.filter(function(m) { return m.name.toLowerCase().indexOf(e.target.value.toLowerCase()) > -1; }); 
+        currentPage = 1; renderGallery(); 
+    };
     
-    const loadMoreBtn = document.getElementById('load-more-btn');
+    var loadMoreBtn = document.getElementById('load-more-btn');
     if (loadMoreBtn) loadMoreBtn.onclick = function() { currentPage++; renderGallery(); };
 
-    const uploadBtn = document.getElementById('upload-btn');
-    const imageUpload = document.getElementById('image-upload');
+    var uploadBtn = document.getElementById('upload-btn');
+    var imageUpload = document.getElementById('image-upload');
     if (uploadBtn && imageUpload) {
         uploadBtn.onclick = function() { imageUpload.click(); };
         imageUpload.onchange = function(e) {
-            const file = e.target.files[0]; if (!file) return;
-            const reader = new FileReader();
+            var file = e.target.files[0]; if (!file) return;
+            var reader = new FileReader();
             reader.onload = function(ev) { selectedImageSrc = ev.target.result; goToStep2(); };
             reader.readAsDataURL(file);
         };
     }
 
-    const nextBtn = document.getElementById('next-btn');
+    var nextBtn = document.getElementById('next-btn');
     if (nextBtn) nextBtn.onclick = goToStep2;
 
-    const backBtn = document.getElementById('back-btn');
+    var backBtn = document.getElementById('back-btn');
     if (backBtn) backBtn.onclick = function() { if(step2) step2.style.display = 'none'; if(step1) step1.style.display = 'block'; };
 
-    // =====================================
-    // منطق بوم و واترمارک @creat_meme_bot
-    // =====================================
     function goToStep2() {
         if(step1) step1.style.display = 'none'; 
         if(step2) step2.style.display = 'block';
@@ -445,15 +428,15 @@ document.addEventListener('DOMContentLoaded', function() {
     function initFabricCanvas(imgSrc) {
         if (fCanvas) fCanvas.dispose();
         fCanvas = new fabric.Canvas('meme-canvas');
-        const canvasWrapper = document.querySelector('.canvas-wrapper');
-        const containerWidth = canvasWrapper ? canvasWrapper.clientWidth : 300;
+        var canvasWrapper = document.querySelector('.canvas-wrapper');
+        var containerWidth = canvasWrapper ? canvasWrapper.clientWidth : 300;
         
         fabric.Image.fromURL(imgSrc, function(img) {
-            const scale = containerWidth / img.width;
+            var scale = containerWidth / img.width;
             fCanvas.setWidth(containerWidth); fCanvas.setHeight(img.height * scale);
             fCanvas.setBackgroundImage(img, fCanvas.renderAll.bind(fCanvas), { scaleX: scale, scaleY: scale, originX: 'left', originY: 'top', crossOrigin: 'anonymous' });
 
-            const watermark = new fabric.Text('@creat_meme_bot', {
+            var watermark = new fabric.Text('@creat_meme_bot', {
                 left: containerWidth - 10,
                 top: (img.height * scale) - 10,
                 fontFamily: 'Poppins',
@@ -479,8 +462,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         fCanvas.on('object:added', function(e) {
             if (e.target && e.target.name !== 'watermark') {
-                const objs = fCanvas.getObjects();
-                for(let i=0; i<objs.length; i++){
+                var objs = fCanvas.getObjects();
+                for(var i=0; i<objs.length; i++){
                     if(objs[i].name === 'watermark') { objs[i].bringToFront(); break; }
                 }
             }
@@ -488,27 +471,27 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function onTextSelected(e) {
-        const activeObj = e.selected[0];
+        var activeObj = e.selected[0];
         if (activeObj && activeObj.type === 'text') {
-            const addTextBtn = document.getElementById('add-text-btn');
-            const editTools = document.getElementById('edit-tools');
+            var addTextBtn = document.getElementById('add-text-btn');
+            var editTools = document.getElementById('edit-tools');
             if(addTextBtn) addTextBtn.style.display = 'none';
             if(editTools) editTools.style.display = 'flex';
         }
     }
 
     function onSelectionCleared() {
-        const addTextBtn = document.getElementById('add-text-btn');
-        const editTools = document.getElementById('edit-tools');
+        var addTextBtn = document.getElementById('add-text-btn');
+        var editTools = document.getElementById('edit-tools');
         if(addTextBtn) addTextBtn.style.display = 'flex';
         if(editTools) editTools.style.display = 'none';
         closeEditPanel();
     }
 
     function openEditPanel() {
-        const activeObj = fCanvas.getActiveObject();
-        const textEditPanel = document.getElementById('text-edit-panel');
-        const textInputField = document.getElementById('text-input-field');
+        var activeObj = fCanvas.getActiveObject();
+        var textEditPanel = document.getElementById('text-edit-panel');
+        var textInputField = document.getElementById('text-input-field');
         if (activeObj && activeObj.type === 'text' && activeObj.name !== 'watermark') {
             if (textEditPanel) textEditPanel.style.transform = 'translateY(0)';
             if (textInputField) textInputField.value = activeObj.text || '';
@@ -522,54 +505,54 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    const editTextBtn = document.getElementById('edit-text-btn');
+    var editTextBtn = document.getElementById('edit-text-btn');
     if(editTextBtn) editTextBtn.onclick = openEditPanel;
 
-    const addTextBtn = document.getElementById('add-text-btn');
+    var addTextBtn = document.getElementById('add-text-btn');
     if(addTextBtn) {
         addTextBtn.onclick = function() {
             if (!fCanvas) return;
-            const t = translations[currentLang];
-            const text = new fabric.Text(t.newTextDef, {
+            var t = translations[currentLang];
+            var text = new fabric.Text(t.newTextDef, {
                 left: fCanvas.width / 2, top: fCanvas.height / 2, fontFamily: 'Lalezar', fill: '#ffffff',
                 fontSize: 40, fontWeight: 'bold', stroke: '#000000', strokeWidth: 2, originX: 'center', originY: 'center', paintFirst: 'stroke'
             });
             fCanvas.add(text).setActiveObject(text);
-            const editTools = document.getElementById('edit-tools');
+            var editTools = document.getElementById('edit-tools');
             if(addTextBtn) addTextBtn.style.display = 'none';
             if(editTools) editTools.style.display = 'flex';
             openEditPanel();
         };
     }
 
-    const textInputField = document.getElementById('text-input-field');
+    var textInputField = document.getElementById('text-input-field');
     if(textInputField) {
-        textInputField.oninput = function(e) { const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('text', e.target.value); fCanvas.renderAll(); } };
+        textInputField.oninput = function(e) { var active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('text', e.target.value); fCanvas.renderAll(); } };
     }
 
-    if(document.getElementById('font-family')) document.getElementById('font-family').onchange = function(e) { const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('fontFamily', e.target.value); fCanvas.renderAll(); } };
-    if(document.getElementById('font-size')) document.getElementById('font-size').oninput = function(e) { const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('fontSize', parseInt(e.target.value)); fCanvas.renderAll(); } };
-    if(document.getElementById('text-color')) document.getElementById('text-color').oninput = function(e) { if(document.getElementById('color-indicator')) document.getElementById('color-indicator').style.backgroundColor = e.target.value; const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('fill', e.target.value); fCanvas.renderAll(); } };
-    if(document.getElementById('stroke-color')) document.getElementById('stroke-color').oninput = function(e) { if(document.getElementById('stroke-indicator')) document.getElementById('stroke-indicator').style.backgroundColor = e.target.value; const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('stroke', e.target.value); fCanvas.renderAll(); } };
+    if(document.getElementById('font-family')) document.getElementById('font-family').onchange = function(e) { var active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('fontFamily', e.target.value); fCanvas.renderAll(); } };
+    if(document.getElementById('font-size')) document.getElementById('font-size').oninput = function(e) { var active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('fontSize', parseInt(e.target.value)); fCanvas.renderAll(); } };
+    if(document.getElementById('text-color')) document.getElementById('text-color').oninput = function(e) { if(document.getElementById('color-indicator')) document.getElementById('color-indicator').style.backgroundColor = e.target.value; var active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('fill', e.target.value); fCanvas.renderAll(); } };
+    if(document.getElementById('stroke-color')) document.getElementById('stroke-color').oninput = function(e) { if(document.getElementById('stroke-indicator')) document.getElementById('stroke-indicator').style.backgroundColor = e.target.value; var active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('stroke', e.target.value); fCanvas.renderAll(); } };
 
     function closeEditPanel() {
-        const textEditPanel = document.getElementById('text-edit-panel');
+        var textEditPanel = document.getElementById('text-edit-panel');
         if(textEditPanel) textEditPanel.style.transform = 'translateY(120%)';
         if(textInputField) textInputField.blur();
     }
     
-    const inlineCloseBtn = document.getElementById('inline-close-btn');
+    var inlineCloseBtn = document.getElementById('inline-close-btn');
     if(inlineCloseBtn) inlineCloseBtn.onclick = closeEditPanel;
 
-    const deleteTextBtn = document.getElementById('delete-text-btn');
+    var deleteTextBtn = document.getElementById('delete-text-btn');
     if(deleteTextBtn) {
-        deleteTextBtn.onclick = function() { const active = fCanvas.getActiveObject(); if (active && active.name !== 'watermark') { fCanvas.remove(active); closeEditPanel(); fCanvas.discardActiveObject().renderAll(); } };
+        deleteTextBtn.onclick = function() { var active = fCanvas.getActiveObject(); if (active && active.name !== 'watermark') { fCanvas.remove(active); closeEditPanel(); fCanvas.discardActiveObject().renderAll(); } };
     }
 
-    const downloadBtn = document.getElementById('download-btn');
+    var downloadBtn = document.getElementById('download-btn');
     if(downloadBtn) {
         downloadBtn.addEventListener('click', function() {
-            let chatId = null;
+            var chatId = null;
             if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 chatId = tg.initDataUnsafe.user.id;
             }
@@ -577,9 +560,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (fCanvas) {
                 fCanvas.discardActiveObject().renderAll();
-                const dataURL = fCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 3 });
+                var dataURL = fCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 3 });
                 fetch(dataURL).then(function(res) { return res.blob(); }).then(function(blob) {
-                    const fd = new FormData(); fd.append('chat_id', chatId); fd.append('photo', blob, 'meme.png');
+                    var fd = new FormData(); fd.append('chat_id', chatId); fd.append('photo', blob, 'meme.png');
                     fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendPhoto", { method: 'POST', body: fd })
                     .then(function() { if (tg) tg.close(); });
                 });
@@ -587,14 +570,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    const shareBtn = document.getElementById('share-btn');
+    var shareBtn = document.getElementById('share-btn');
     if(shareBtn) {
         shareBtn.addEventListener('click', function() {
             if (fCanvas) {
                 fCanvas.discardActiveObject().renderAll();
-                const dataURL = fCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 3 });
+                var dataURL = fCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 3 });
                 fetch(dataURL).then(function(res) { return res.blob(); }).then(async function(blob) {
-                    const file = new File([blob], "meme.png", { type: "image/png" });
+                    var file = new File([blob], "meme.png", { type: "image/png" });
                     if (navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file] }); }
                 });
             }

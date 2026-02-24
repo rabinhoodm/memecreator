@@ -26,8 +26,8 @@ h1 { color: var(--bamboo-dark); margin-bottom: 10px; font-weight: 700; }
 button { font-family: inherit; transition: all 0.3s ease; }
 button:active { transform: scale(0.97) !important; }
 
-/* تنظیمات دکمه‌های بالای صفحه */
-.glass-btn { position: absolute; padding: 8px 14px; cursor: pointer; border: 1px solid var(--glass-border); border-radius: 20px; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); font-weight: 700; z-index: 100; box-shadow: var(--shadow-soft); display: flex; align-items: center; gap: 5px; }
+/* تنظیمات دکمه‌های بالای صفحه - z-index بالاتر رفت تا کامل کلیک بشه */
+.glass-btn { position: absolute; padding: 8px 14px; cursor: pointer; border: 1px solid var(--glass-border); border-radius: 20px; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); font-weight: 700; z-index: 9999; box-shadow: var(--shadow-soft); display: flex; align-items: center; gap: 5px; }
 #lang-btn { top: 15px; color: var(--text-dark); }
 #wallet-btn { top: 15px; border-color: rgba(250, 204, 21, 0.6); color: #ca8a04; }
 
