@@ -21,16 +21,9 @@ const translations = {
         backToMenuBtn: "🏠 Main Menu",
         addTextLbl: "Add Text", dir: "ltr", panelTitle: "Edit Text ✍️", fontLbl: "Font:", sizeLbl: "Size:",
         colorLbl: "Text Color", strokeLbl: "Stroke", placeholder: "Type your text here...",
-        
-        tabSupport: "🛠️ Support", tabCollab: "🤝 Collab",
-        supTextPlc: "Describe your issue...", supAttachBtn: "📎 Attach Image (Optional)",
-        colChannelPlc: "Channel ID (e.g., @channel)", colTgPlc: "Your Telegram ID", colExtraPlc: "Additional details...",
-        supportSend: "Send 🚀", supportClose: "Close ❌",
-        
-        alertEmpty: "Please fill the required fields! 😅", 
-        alertSuccessCollab: "Your request has been received. Our team will review and contact you if needed! ✅",
-        alertSuccessSupport: "Your message has been sent to the support team! ✅",
-        alertError: "Oops! Something went wrong."
+        supportTitle: "Contact Admin 💎", supportDesc: "Write your request for support or collaboration.",
+        supportPlc: "Your message...", supportSend: "Send 🚀", supportClose: "Close ❌",
+        alertEmpty: "Please write a message first! 😅", alertSuccess: "Message sent successfully! ✅", alertError: "Oops! Something went wrong."
     },
     fa: {
         langTxt: "EN", landingTitle: "بامبو میم 🎋", landingDesc: "خلاقیتت رو رها کن!",
@@ -41,16 +34,9 @@ const translations = {
         backToMenuBtn: "🏠 منوی اصلی",
         addTextLbl: "افزودن متن", dir: "rtl", panelTitle: "ویرایش متن ✍️", fontLbl: "فونت:", sizeLbl: "اندازه:",
         colorLbl: "رنگ متن", strokeLbl: "حاشیه", placeholder: "متن خود را اینجا بنویسید...",
-        
-        tabSupport: "🛠️ پشتیبانی", tabCollab: "🤝 همکاری",
-        supTextPlc: "مشکل یا سوالتون رو کامل بنویسید...", supAttachBtn: "📎 ضمیمه کردن عکس (اختیاری)",
-        colChannelPlc: "آیدی کانال شما (مثال: channel@)", colTgPlc: "آیدی تلگرام شما جهت ارتباط", colExtraPlc: "توضیحات اضافه در صورت نیاز...",
-        supportSend: "ارسال 🚀", supportClose: "بستن ❌",
-        
-        alertEmpty: "رئیس، لطفا فیلدهای لازم رو پر کن! 😅", 
-        alertSuccessCollab: "درخواست شما ثبت شد. تیم ما بررسی می‌کنه و در صورت نیاز ارتباط می‌گیره باهاتون! ✅",
-        alertSuccessSupport: "پیام شما برای تیم پشتیبانی ارسال شد! ✅",
-        alertError: "اوه! مشکلی پیش آمد."
+        supportTitle: "ارتباط با مدیریت 💎", supportDesc: "درخواست همکاری، اسپانسری یا مشکل خود را بنویسید.",
+        supportPlc: "پیام شما...", supportSend: "ارسال 🚀", supportClose: "بستن ❌",
+        alertEmpty: "رئیس، لطفا اول پیامت رو بنویس! 😅", alertSuccess: "پیام شما با موفقیت ارسال شد! ✅", alertError: "اوه! مشکلی پیش آمد."
     }
 };
 
@@ -62,8 +48,6 @@ let filteredMemes = [];
 let currentPage = 1;
 const memesPerPage = 20;
 
-let activeTab = 'support';
-
 document.addEventListener('DOMContentLoaded', () => {
     const splashScreen = document.getElementById('splash-screen');
     const landingPage = document.getElementById('landing-page');
@@ -72,57 +56,71 @@ document.addEventListener('DOMContentLoaded', () => {
     const step2 = document.getElementById('step-2');
     const templateGallery = document.getElementById('template-gallery');
     
+    const textEditPanel = document.getElementById('text-edit-panel');
+    const addTextBtn = document.getElementById('add-text-btn');
+    const editTools = document.getElementById('edit-tools');
+    const editTextBtn = document.getElementById('edit-text-btn');
+    const deleteTextBtn = document.getElementById('delete-text-btn');
+    const textInputField = document.getElementById('text-input-field');
+    const inlineCloseBtn = document.getElementById('inline-close-btn');
+
+    const supportBtn = document.getElementById('support-btn');
     const supportModal = document.getElementById('support-modal');
-    const tabSupportBtn = document.getElementById('tab-support-btn');
-    const tabCollabBtn = document.getElementById('tab-collab-btn');
-    const formSupportView = document.getElementById('form-support-view');
-    const formCollabView = document.getElementById('form-collab-view');const supportText = document.getElementById('support-text');
-    const supportFileUpload = document.getElementById('support-file-upload');
-    const supportImgBtn = document.getElementById('support-img-btn');
-    const supportFileName = document.getElementById('support-file-name');
-    
-    const collabChannel = document.getElementById('collab-channel');
-    const collabTelegram = document.getElementById('collab-telegram');
-    const collabExtra = document.getElementById('collab-extra');
+    const closeSupportBtn = document.getElementById('close-support-btn');
+    const sendSupportBtn = document.getElementById('send-support-btn');
+    const supportText = document.getElementById('support-text');
+    const backToMenuBtn = document.getElementById('back-to-menu-btn');
 
     fetchTrendingMemes();
 
     setTimeout(() => {
         try {
-            if (splashScreen) splashScreen.style.display = 'none';
-            if (landingPage) landingPage.style.display = 'block';
+            if (splashScreen) splashScreen.style.display = 'none';if (landingPage) landingPage.style.display = 'block';
             updateLanguage(currentLang);
         } catch (error) {
+            console.error(error);
             if (splashScreen) splashScreen.style.display = 'none';
             if (landingPage) landingPage.style.display = 'block';
         }
     }, 2500);
 
-    if (document.getElementById('start-app-btn')) {
-        document.getElementById('start-app-btn').addEventListener('click', () => {
+    const startAppBtn = document.getElementById('start-app-btn');
+    if (startAppBtn) {
+        startAppBtn.addEventListener('click', () => {
             if (landingPage) landingPage.style.display = 'none';
             if (appContainer) appContainer.style.display = 'block';
         });
     }
 
-    if (document.getElementById('back-to-menu-btn')) {
-        document.getElementById('back-to-menu-btn').addEventListener('click', () => {
+    if (backToMenuBtn) {
+        backToMenuBtn.addEventListener('click', () => {
             if (appContainer) appContainer.style.display = 'none';
             if (landingPage) landingPage.style.display = 'block';
         });
     }
 
-    if (document.getElementById('channel-btn')) document.getElementById('channel-btn').addEventListener('click', () => window.open('https://t.me/bamboo_network', '_blank'));
+    const channelBtn = document.getElementById('channel-btn');
+    if (channelBtn) {
+        channelBtn.addEventListener('click', () => window.open('https://t.me/bamboo_network', '_blank'));
+    }
 
-    if (document.getElementById('lang-btn')) {
-        document.getElementById('lang-btn').addEventListener('click', () => {
+    const langBtn = document.getElementById('lang-btn');
+    if (langBtn) {
+        langBtn.addEventListener('click', () => {
             currentLang = currentLang === 'fa' ? 'en' : 'fa';
             updateLanguage(currentLang);
         });
     }
 
-    function safeSetText(id, text) { const el = document.getElementById(id); if (el) el.innerText = text; }
-    function safeSetPlaceholder(id, text) { const el = document.getElementById(id); if (el) el.placeholder = text; }
+    function safeSetText(id, text) {
+        const el = document.getElementById(id);
+        if (el) el.innerText = text;
+    }
+
+    function safeSetPlaceholder(id, text) {
+        const el = document.getElementById(id);
+        if (el) el.placeholder = text;
+    }
 
     function updateLanguage(lang) {
         const t = translations[lang];
@@ -152,141 +150,67 @@ document.addEventListener('DOMContentLoaded', () => {
         safeSetPlaceholder('text-input-field', t.placeholder);
 
         safeSetText('support-btn-txt', t.supportBtnTxt);
-        safeSetText('tab-support-btn', t.tabSupport);
-        safeSetText('tab-collab-btn', t.tabCollab);
-        safeSetPlaceholder('support-text', t.supTextPlc);
-        safeSetText('support-img-btn', t.supAttachBtn);
-        safeSetPlaceholder('collab-channel', t.colChannelPlc);
-        safeSetPlaceholder('collab-telegram', t.colTgPlc);
-        safeSetPlaceholder('collab-extra', t.colExtraPlc);
-        
+        safeSetText('support-title', t.supportTitle);
+        safeSetText('support-desc', t.supportDesc);
+        safeSetPlaceholder('support-text', t.supportPlc);
         safeSetText('send-support-btn', t.supportSend);
         safeSetText('close-support-btn', t.supportClose);
     }
 
-    if (document.getElementById('support-btn')) {
-        document.getElementById('support-btn').onclick = () => { if(supportModal) supportModal.style.display = 'block'; };
+    if (supportBtn && supportModal) {
+        supportBtn.onclick = () => { supportModal.style.display = 'block'; };
     }
 
-    if (document.getElementById('close-support-btn')) {
-        document.getElementById('close-support-btn').onclick = () => { 
-            if(supportModal) supportModal.style.display = 'none'; 
+    if (closeSupportBtn && supportModal) {
+        closeSupportBtn.onclick = () => { 
+            supportModal.style.display = 'none'; 
             if(supportText) supportText.value = ''; 
-            if(collabChannel) collabChannel.value = '';
-            if(collabTelegram) collabTelegram.value = '';
-            if(collabExtra) collabExtra.value = '';
-            if(supportFileUpload) supportFileUpload.value = '';
-            if(supportFileName) supportFileName.style.display = 'none';
         };
     }
 
-    if (tabSupportBtn && tabCollabBtn) {
-        tabSupportBtn.onclick = () => {
-            activeTab = 'support';
-            tabSupportBtn.className = 'main-btn glass-btn-primary';
-            tabCollabBtn.className = 'secondary-btn glass-btn-sec';
-            if(formSupportView) formSupportView.style.display = 'block';
-            if(formCollabView) formCollabView.style.display = 'none';
-        };
-
-        tabCollabBtn.onclick = () => {
-            activeTab = 'collab';
-            tabCollabBtn.className = 'main-btn glass-btn-primary';
-            tabSupportBtn.className = 'secondary-btn glass-btn-sec';
-            if(formSupportView) formSupportView.style.display = 'none';
-            if(formCollabView) formCollabView.style.display = 'block';
-        };
-    }
-
-    if (supportImgBtn && supportFileUpload) {
-        supportImgBtn.onclick = () => supportFileUpload.click();
-        supportFileUpload.onchange = (e) => {
-            if (e.target.files.length > 0 && supportFileName) {
-                supportFileName.style.display = 'block';
-            }
-        };
-    }
-
-    const sendSupportBtn = document.getElementById('send-support-btn');
     if (sendSupportBtn) {
         sendSupportBtn.onclick = () => {
+            const message = supportText ? supportText.value.trim() : "";
             const t = translations[currentLang];
+            
+            if (!message) { alert(t.alertEmpty); return; }
+            
             const originalText = sendSupportBtn.innerText;
+            sendSupportBtn.innerText = "⏳...";
+            sendSupportBtn.disabled = true;
 
-            // استخراج اطلاعات اکانت کاربری که داره پیام میده
-            let senderInfo = "نامشخص (خارج از تلگرام)";
-            if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                const u = tg.initDataUnsafe.user;
-                senderInfo = آیدی عددی: <code>${u.id}</code>\nنام: ${u.first_name} ${u.last_name || ''};
-                if (u.username) senderInfo += \nیوزرنیم: @${u.username};
-            }
+            const finalMessage = "🌟 <b>پشتیبانی و همکاری (بامبو میم)</b>\n\n💬 پیام:\n" + message;
 
-            if (activeTab === 'support') {
-                const message = supportText ? supportText.value.trim() : "";
-                const file = (supportFileUpload && supportFileUpload.files.length > 0) ? supportFileUpload.files[0] : null;
-
-                if (!message && !file) { alert(t.alertEmpty); return; }
-
-                sendSupportBtn.innerText = "⏳...";
-                sendSupportBtn.disabled = true;
-
-                if (file) {
-                    const fd = new FormData();
-                    fd.append('chat_id', ADMIN_CHAT_ID);
-                    fd.append('photo', file);
-                    fd.append('caption', `🛠️ <b>تیکت پشتیبانی جدید</b>\n\n👤 <b>فرستنده:</b>\n${senderInfo}\n\n📝 <b>پیام:</b>\n${message}`);
-                    fd.append('parse_mode', 'HTML');
-
-                    fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendPhoto", { method: 'POST', body: fd })
-                    .then(res => res.json()).then(data => {
-                        if (data.ok) { alert(t.alertSuccessSupport); document.getElementById('close-support-btn').click(); } 
-                        else { alert(t.alertError); }
-                    })
-                    .catch(() => alert(t.alertError))
-                    .finally(() => { sendSupportBtn.innerText = originalText; sendSupportBtn.disabled = false; });
-                } else {
-                    const finalMsg = 🛠️ <b>تیکت پشتیبانی جدید</b>\n\n👤 <b>فرستنده:</b>\n${senderInfo}\n\n📝 <b>پیام:</b>\n${message};
-                    fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' },body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: finalMsg, parse_mode: "HTML" })
-                    })
-                    .then(res => res.json()).then(data => {
-                        if (data.ok) { alert(t.alertSuccessSupport); document.getElementById('close-support-btn').click(); } 
-                        else { alert(t.alertError); }
-                    })
-                    .catch(() => alert(t.alertError))
-                    .finally(() => { sendSupportBtn.innerText = originalText; sendSupportBtn.disabled = false; });
+            fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: finalMessage, parse_mode: "HTML" })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.ok) {
+                    alert(t.alertSuccess);
+                    if (supportModal) supportModal.style.display = 'none';
+                    if (supportText) supportText.value = '';
+                } else { 
+                    alert(t.alertError); 
                 }
-
-            } else if (activeTab === 'collab') {
-                const ch = collabChannel ? collabChannel.value.trim() : "";
-                const tgId = collabTelegram ? collabTelegram.value.trim() : "";
-                const ex = collabExtra ? collabExtra.value.trim() : "";
-
-                if (!ch && !tgId) { alert(t.alertEmpty); return; }
-
-                sendSupportBtn.innerText = "⏳...";
-                sendSupportBtn.disabled = true;
-
-                const finalMsg = 🤝 <b>درخواست همکاری جدید</b>\n\n👤 <b>فرستنده (اکانت اصلی):</b>\n${senderInfo}\n\n📢 فرم کانال: ${ch}\n👤 فرم آیدی: ${tgId}\n📝 توضیحات اضافه:\n${ex};
-
-                fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: ADMIN_CHAT_ID, text: finalMsg, parse_mode: "HTML" })
-                })
-                .then(res => res.json()).then(data => {
-                    if (data.ok) { alert(t.alertSuccessCollab); document.getElementById('close-support-btn').click(); } 
-                    else { alert(t.alertError); }
-                })
-                .catch(() => alert(t.alertError))
-                .finally(() => { sendSupportBtn.innerText = originalText; sendSupportBtn.disabled = false; });
-            }
+            })
+            .catch(() => alert(t.alertError))
+            .finally(() => {
+                sendSupportBtn.innerText = originalText;
+                sendSupportBtn.disabled = false;
+            });
         };
     }
 
     function fetchTrendingMemes() {
         try {
             fetch('https://api.imgflip.com/get_memes').then(res => res.json()).then(data => {
-                if (data.success) { allMemes = data.data.memes; filteredMemes = [...allMemes]; renderGallery(); }
+                if (data.success) { 
+                    allMemes = data.data.memes; 
+                    filteredMemes = [...allMemes]; 
+                    renderGallery(); 
+                }
             }).catch(e => console.log(e));
         } catch(e) {}
     }
@@ -297,31 +221,50 @@ document.addEventListener('DOMContentLoaded', () => {
         const memesToShow = filteredMemes.slice((currentPage - 1) * memesPerPage, currentPage * memesPerPage);
         memesToShow.forEach(meme => {
             const img = document.createElement('img');
-            img.src = meme.url; img.className = 'template-img'; img.crossOrigin = "anonymous";
+            img.src = meme.url; 
+            img.className = 'template-img'; 
+            img.crossOrigin = "anonymous";
             img.onclick = () => {
                 document.querySelectorAll('.template-img').forEach(i => i.classList.remove('selected'));
-                img.classList.add('selected'); selectedImageSrc = img.src;
-                if (document.getElementById('next-btn')) document.getElementById('next-btn').disabled = false;
+                img.classList.add('selected'); 
+                selectedImageSrc = img.src;
+                const nextBtn = document.getElementById('next-btn');
+                if (nextBtn) nextBtn.disabled = false;
             };
             templateGallery.appendChild(img);
         });
         const loadMoreBtn = document.getElementById('load-more-btn');
-        if (loadMoreBtn) loadMoreBtn.classList.toggle('hidden', (currentPage * memesPerPage) >= filteredMemes.length);
+        if (loadMoreBtn) {
+            loadMoreBtn.classList.toggle('hidden', (currentPage * memesPerPage) >= filteredMemes.length);
+        }
     }
 
     const searchInput = document.getElementById('search-input');
-    if (searchInput) searchInput.oninput = (e) => { filteredMemes = allMemes.filter(m => m.name.toLowerCase().includes(e.target.value.toLowerCase())); currentPage = 1; renderGallery(); };
+    if (searchInput) {
+        searchInput.oninput = (e) => {
+            filteredMemes = allMemes.filter(m => m.name.toLowerCase().includes(e.target.value.toLowerCase()));
+            currentPage = 1; 
+            renderGallery();
+        };
+    }
     
     const loadMoreBtn = document.getElementById('load-more-btn');
-    if (loadMoreBtn) loadMoreBtn.onclick = () => { currentPage++; renderGallery(); };
+    if (loadMoreBtn) {
+        loadMoreBtn.onclick = () => { currentPage++; renderGallery(); };
+    }
 
     const uploadBtn = document.getElementById('upload-btn');
     const imageUpload = document.getElementById('image-upload');
     if (uploadBtn && imageUpload) {
         uploadBtn.onclick = () => imageUpload.click();
         imageUpload.onchange = (e) => {
-            const file = e.target.files[0]; if (!file) return;
-            const reader = new FileReader();reader.onload = (ev) => { selectedImageSrc = ev.target.result; goToStep2(); };
+            const file = e.target.files[0]; 
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => { 
+                selectedImageSrc = ev.target.result; 
+                goToStep2(); 
+            };
             reader.readAsDataURL(file);
         };
     }
@@ -330,7 +273,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (nextBtn) nextBtn.onclick = goToStep2;
 
     const backBtn = document.getElementById('back-btn');
-    if (backBtn) backBtn.onclick = () => { if(step2) step2.style.display = 'none'; if(step1) step1.style.display = 'block'; };
+    if (backBtn) {
+        backBtn.onclick = () => { 
+            if(step2) step2.style.display = 'none'; 
+            if(step1) step1.style.display = 'block'; 
+        };
+    }
 
     function goToStep2() {
         if(step1) step1.style.display = 'none'; 
@@ -346,8 +294,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         fabric.Image.fromURL(imgSrc, (img) => {
             const scale = containerWidth / img.width;
-            fCanvas.setWidth(containerWidth); fCanvas.setHeight(img.height * scale);
-            fCanvas.setBackgroundImage(img, fCanvas.renderAll.bind(fCanvas), { scaleX: scale, scaleY: scale, originX: 'left', originY: 'top', crossOrigin: 'anonymous' });
+            fCanvas.setWidth(containerWidth); 
+            fCanvas.setHeight(img.height * scale);
+            fCanvas.setBackgroundImage(img, fCanvas.renderAll.bind(fCanvas), {
+                scaleX: scale, scaleY: scale, originX: 'left', originY: 'top', crossOrigin: 'anonymous'
+            });
         }, { crossOrigin: 'anonymous' });
 
         fCanvas.on('selection:created', onTextSelected);
@@ -358,16 +309,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function onTextSelected(e) {
         const activeObj = e.selected[0];
         if (activeObj && activeObj.type === 'text') {
-            const addTextBtn = document.getElementById('add-text-btn');
-            const editTools = document.getElementById('edit-tools');
             if(addTextBtn) addTextBtn.style.display = 'none';
             if(editTools) editTools.style.display = 'flex';
         }
     }
 
     function onSelectionCleared() {
-        const addTextBtn = document.getElementById('add-text-btn');
-        const editTools = document.getElementById('edit-tools');
         if(addTextBtn) addTextBtn.style.display = 'flex';
         if(editTools) editTools.style.display = 'none';
         closeEditPanel();
@@ -375,61 +322,111 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function openEditPanel() {
         const activeObj = fCanvas.getActiveObject();
-        const textEditPanel = document.getElementById('text-edit-panel');
-        const textInputField = document.getElementById('text-input-field');
         if (activeObj && activeObj.type === 'text') {
             if (textEditPanel) textEditPanel.style.transform = 'translateY(0)';
+            
             if (textInputField) textInputField.value = activeObj.text || '';
-            if (document.getElementById('font-family')) document.getElementById('font-family').value = activeObj.fontFamily || 'Lalezar';
-            if (document.getElementById('font-size')) document.getElementById('font-size').value = activeObj.fontSize || 40;
-            if (document.getElementById('text-color')) document.getElementById('text-color').value = activeObj.fill || '#ffffff';
-            if (document.getElementById('color-indicator')) document.getElementById('color-indicator').style.backgroundColor = activeObj.fill || '#ffffff';
-            if (document.getElementById('stroke-color')) document.getElementById('stroke-color').value = activeObj.stroke || '#000000';
-            if (document.getElementById('stroke-indicator')) document.getElementById('stroke-indicator').style.backgroundColor = activeObj.stroke || '#000000';
+            const fontFamilySel = document.getElementById('font-family');
+            if (fontFamilySel) fontFamilySel.value = activeObj.fontFamily || 'Lalezar';
+            
+            const fontSizeRange = document.getElementById('font-size');
+            if (fontSizeRange) fontSizeRange.value = activeObj.fontSize || 40;
+            
+            const textColor = document.getElementById('text-color');
+            if (textColor) textColor.value = activeObj.fill || '#ffffff';
+            
+            const colorIndicator = document.getElementById('color-indicator');
+            if (colorIndicator) colorIndicator.style.backgroundColor = activeObj.fill || '#ffffff';
+            
+            const strokeColor = document.getElementById('stroke-color');
+            if (strokeColor) strokeColor.value = activeObj.stroke || '#000000';
+            
+            const strokeIndicator = document.getElementById('stroke-indicator');
+            if (strokeIndicator) strokeIndicator.style.backgroundColor = activeObj.stroke || '#000000';
+            
             setTimeout(() => { if(textInputField) textInputField.focus(); }, 300);
         }
     }
 
-    const editTextBtn = document.getElementById('edit-text-btn');
     if(editTextBtn) editTextBtn.onclick = openEditPanel;
 
-    const addTextBtn = document.getElementById('add-text-btn');
     if(addTextBtn) {
         addTextBtn.onclick = () => {
             if (!fCanvas) return;
-            const text = new fabric.Text(currentLang === 'fa' ? 'متن جدید' : 'New Text', {
-                left: fCanvas.width / 2, top: fCanvas.height / 2, fontFamily: 'Lalezar', fill: '#ffffff',fontSize: 40, fontWeight: 'bold', stroke: '#000000', strokeWidth: 2, originX: 'center', originY: 'center', paintFirst: 'stroke'
+            const initialText = currentLang === 'fa' ? 'متن جدید' : 'New Text';
+            const text = new fabric.Text(initialText, {
+                left: fCanvas.width / 2, top: fCanvas.height / 2, 
+                fontFamily: 'Lalezar', fill: '#ffffff',
+                fontSize: 40, fontWeight: 'bold', stroke: '#000000', strokeWidth: 2,
+                originX: 'center', originY: 'center', paintFirst: 'stroke'
             });
             fCanvas.add(text).setActiveObject(text);
-            const editTools = document.getElementById('edit-tools');
+            
             if(addTextBtn) addTextBtn.style.display = 'none';
             if(editTools) editTools.style.display = 'flex';
             openEditPanel();
         };
     }
 
-    const textInputField = document.getElementById('text-input-field');
     if(textInputField) {
-        textInputField.oninput = (e) => { const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('text', e.target.value); fCanvas.renderAll(); } };
+        textInputField.oninput = (e) => {
+            const active = fCanvas.getActiveObject();
+            if (active && active.type === 'text') { active.set('text', e.target.value); fCanvas.renderAll(); }
+        };
     }
 
-    if(document.getElementById('font-family')) document.getElementById('font-family').onchange = (e) => { const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('fontFamily', e.target.value); fCanvas.renderAll(); } };
-    if(document.getElementById('font-size')) document.getElementById('font-size').oninput = (e) => { const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('fontSize', parseInt(e.target.value)); fCanvas.renderAll(); } };
-    if(document.getElementById('text-color')) document.getElementById('text-color').oninput = (e) => { if(document.getElementById('color-indicator')) document.getElementById('color-indicator').style.backgroundColor = e.target.value; const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('fill', e.target.value); fCanvas.renderAll(); } };
-    if(document.getElementById('stroke-color')) document.getElementById('stroke-color').oninput = (e) => { if(document.getElementById('stroke-indicator')) document.getElementById('stroke-indicator').style.backgroundColor = e.target.value; const active = fCanvas.getActiveObject(); if (active && active.type === 'text') { active.set('stroke', e.target.value); fCanvas.renderAll(); } };
+    const fontFamilySel = document.getElementById('font-family');
+    if(fontFamilySel) {
+        fontFamilySel.onchange = (e) => { 
+            const active = fCanvas.getActiveObject(); 
+            if (active && active.type === 'text') { active.set('fontFamily', e.target.value); fCanvas.renderAll(); } 
+        };
+    }
+    
+    const fontSizeRange = document.getElementById('font-size');
+    if(fontSizeRange) {
+        fontSizeRange.oninput = (e) => { 
+            const active = fCanvas.getActiveObject(); 
+            if (active && active.type === 'text') { active.set('fontSize', parseInt(e.target.value)); fCanvas.renderAll(); } 
+        };
+    }
+    
+    const textColor = document.getElementById('text-color');
+    if(textColor) {
+        textColor.oninput = (e) => { 
+            const colorIndicator = document.getElementById('color-indicator');
+            if(colorIndicator) colorIndicator.style.backgroundColor = e.target.value; 
+            const active = fCanvas.getActiveObject(); 
+            if (active && active.type === 'text') { active.set('fill', e.target.value); fCanvas.renderAll(); } 
+        };
+    }
+    
+    const strokeColor = document.getElementById('stroke-color');
+    if(strokeColor) {
+        strokeColor.oninput = (e) => { 
+            const strokeIndicator = document.getElementById('stroke-indicator');
+            if(strokeIndicator) strokeIndicator.style.backgroundColor = e.target.value; 
+            const active = fCanvas.getActiveObject(); 
+            if (active && active.type === 'text') { active.set('stroke', e.target.value); fCanvas.renderAll(); } 
+        };
+    }
 
     function closeEditPanel() {
-        const textEditPanel = document.getElementById('text-edit-panel');
         if(textEditPanel) textEditPanel.style.transform = 'translateY(120%)';
         if(textInputField) textInputField.blur();
     }
     
-    const inlineCloseBtn = document.getElementById('inline-close-btn');
     if(inlineCloseBtn) inlineCloseBtn.onclick = closeEditPanel;
 
-    const deleteTextBtn = document.getElementById('delete-text-btn');
     if(deleteTextBtn) {
-        deleteTextBtn.onclick = () => { const active = fCanvas.getActiveObject(); if (active) { fCanvas.remove(active); closeEditPanel(); fCanvas.discardActiveObject().renderAll(); } };
+        deleteTextBtn.onclick = () => {
+            const active = fCanvas.getActiveObject();
+            if (active) { 
+                fCanvas.remove(active); 
+                closeEditPanel(); 
+                fCanvas.discardActiveObject().renderAll(); 
+            }
+        };
     }
 
     const downloadBtn = document.getElementById('download-btn');
@@ -441,7 +438,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 fCanvas.discardActiveObject().renderAll();
                 const dataURL = fCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 3 });
                 fetch(dataURL).then(res => res.blob()).then(blob => {
-                    const fd = new FormData(); fd.append('chat_id', chatId); fd.append('photo', blob, 'meme.png');
+                    const fd = new FormData(); 
+                    fd.append('chat_id', chatId); 
+                    fd.append('photo', blob, 'meme.png');
                     fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendPhoto", { method: 'POST', body: fd })
                     .then(() => { if (tg) tg.close(); });
                 });
@@ -456,7 +455,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 fCanvas.discardActiveObject().renderAll();
                 const dataURL = fCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 3 });
                 fetch(dataURL).then(res => res.blob()).then(async blob => {
-                    const file = new File([blob], "meme.png", { type: "image/png" });if (navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file] }); }
+                    const file = new File([blob], "meme.png", { type: "image/png" });
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        navigator.share({ files: [file] });
+                    }
                 });
             }
         });

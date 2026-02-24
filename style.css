@@ -69,25 +69,18 @@ html[dir="ltr"] .control-group { text-align: left; }
 .color-picker-wrapper input[type="color"] { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
 .color-icon { width: 100%; height: 100%; border-radius: 50%; }
 
-/* === پس‌زمینه اجسام سه‌بعدی و متن حبابی === */
-.bg-3d-container { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0; overflow: hidden; pointer-events: none; perspective: 1200px; }
+/* === پس‌زمینه اجسام سه‌بعدی سبز و شیشه‌ای === */
+.bg-3d-container { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0; overflow: hidden; pointer-events: none; perspective: 1000px; }
+.shape-glass { position: absolute; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 2px solid rgba(74, 222, 128, 0.4); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), inset 0 0 20px rgba(74, 222, 128, 0.3); }
 
-/* متن حبابی BAMBOO */
-.bamboo-bg-text { position: absolute; top: 30%; left: -10%; font-family: 'Poppins', sans-serif; font-weight: 900; font-size: 18vw; color: rgba(255, 255, 255, 0.15); text-shadow: 10px 10px 20px rgba(74, 222, 128, 0.2), -5px -5px 15px rgba(255, 255, 255, 0.8), inset 5px 5px 10px rgba(0,0,0,0.05); transform: rotate(-15deg); animation: floatText 20s infinite alternate ease-in-out; white-space: nowrap; user-select: none; }
+/* گوی */
+.sphere-glass { width: 140px; height: 140px; top: 15%; left: 10%; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(134, 239, 172, 0.6), rgba(22, 101, 52, 0.4)); animation: floatObj 15s infinite alternate ease-in-out; }
 
-/* اجسام شیشه‌ای حجیم (تکنیک Inner Shadow برای سه‌بعدی شدن) */
-.shape-glass { position: absolute; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: inset -15px -15px 25px rgba(22, 101, 52, 0.3), inset 15px 15px 25px rgba(255, 255, 255, 0.8), 0 15px 35px rgba(0, 0, 0, 0.1); background: radial-gradient(circle at 30% 30%, rgba(134, 239, 172, 0.7), rgba(34, 197, 94, 0.1)); }
+/* مکعب */
+.cube-glass { width: 110px; height: 110px; bottom: 20%; right: 10%; border-radius: 15px; background: linear-gradient(135deg, rgba(74, 222, 128, 0.6), rgba(20, 83, 45, 0.4)); animation: spinObj 20s infinite linear; }
 
-.blob-3d-1 { width: 180px; height: 180px; top: 10%; left: 5%; border-radius: 50%; animation: morphAndFloat 18s infinite alternate ease-in-out; }
-.blob-3d-2 { width: 120px; height: 120px; bottom: 15%; right: 10%; border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; animation: morphAndFloat 22s infinite alternate-reverse ease-in-out; }
-.blob-3d-3 { width: 220px; height: 220px; top: 50%; left: 70%; border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; animation: morphAndFloat 25s infinite alternate ease-in-out; background: radial-gradient(circle at 30% 30%, rgba(250, 204, 21, 0.5), rgba(34, 197, 94, 0.1)); }
-.blob-3d-4 { width: 90px; height: 90px; top: 75%; left: 20%; border-radius: 50%; animation: floatSimple 15s infinite alternate ease-in-out; }
-.blob-3d-5 { width: 150px; height: 150px; top: -5%; right: 20%; border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; animation: morphAndFloat 20s infinite alternate ease-in-out; }
+/* ستاره */
+.star-glass { width: 130px; height: 130px; top: 40%; left: 70%; background: linear-gradient(135deg, rgba(134, 239, 172, 0.6), rgba(22, 101, 52, 0.4)); clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); filter: drop-shadow(0 0 15px rgba(74, 222, 128, 0.4)); border: none; animation: spinFloatObj 18s infinite alternate ease-in-out; }
 
-@keyframes floatText { 0% { transform: translateY(0) translateX(0) rotate(-15deg); } 100% { transform: translateY(-30px) translateX(20px) rotate(-5deg); } }
-@keyframes floatSimple { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-50px) scale(1.1); } }
-@keyframes morphAndFloat {
-    0% { transform: translateY(0) rotate(0deg) scale(1); border-radius: 50%; }
-    50% { transform: translateY(-40px) rotate(180deg) scale(1.1); border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
-    100% { transform: translateY(20px) rotate(360deg) scale(0.9); border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-}
+@keyframes floatObj { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-40px) scale(1.1); } }@keyframes spinObj { 0% { transform: translateY(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); } 50% { transform: translateY(-30px) rotateX(180deg) rotateY(90deg) rotateZ(180deg); } 100% { transform: translateY(0) rotateX(360deg) rotateY(180deg) rotateZ(360deg); } }
+@keyframes spinFloatObj { 0% { transform: translateY(0) rotate(0deg) scale(0.9); } 100% { transform: translateY(30px) rotate(180deg) scale(1.1); } }
